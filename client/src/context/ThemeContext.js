@@ -7,7 +7,7 @@ const ThemeContext = createContext();
 export const useTheme = () => useContext(ThemeContext);
 
 const defaultTheme = {
-  siteName: 'MLO Store', siteLogo: '', favicon: '',
+  siteName: '𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤', siteLogo: '', favicon: '',
   bgPrimary: '#0a0a14', bgSecondary: '#0f0f1a', bgCard: '#14142a',
   bgCardHover: '#1a1a34', bgInput: '#1a1a30',
   borderColor: '#2a2a4a', borderHover: '#4a4a7a',
@@ -15,7 +15,7 @@ const defaultTheme = {
   accent: '#6c5ce7', accentLight: '#a29bfe', accentGlow: 'rgba(108, 92, 231, 0.3)',
   success: '#00b894', warning: '#fdcb6e', danger: '#e17055', info: '#74b9ff',
   fontFamily: 'Inter', headingFont: 'Orbitron', borderRadius: 12,
-  heroTitle: 'Premium FiveM MLOs & Maps', heroSubtitle: '',
+  heroTitle: '𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤 • Premium MLOs & Maps', heroSubtitle: '',
   heroBg: '', bgImage: '', bgRepeat: 'repeat', bgSize: 'auto', customCss: '', footerText: '',
 };
 

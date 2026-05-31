@@ -33,7 +33,7 @@ export default function Navbar() {
       <div className="navbar-inner">
         <Link to="/" className="navbar-brand">
           {theme.siteLogo ? <img src={theme.siteLogo} alt={theme.siteName} className="navbar-logo" /> : <span className="brand-icon">🏙️</span>}
-          <span className="brand-text">{theme.siteName || 'MLO Store'}</span>
+          <span className="brand-text">{theme.siteName || '𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤'}</span>
         </Link>
 
         <div className={`navbar-links ${menuOpen ? 'open' : ''}`}>

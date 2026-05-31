@@ -32,23 +32,24 @@ const sendVerificationEmail = async (to, code) => {
   if (!sg) throw new Error('Email not configured');
   await sg.send({
     to, from: fromEmail,
-    subject: 'Verify your email - FiveM MLO Store',
+    subject: 'Verify your email - 𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤',
     html: `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0f0f1a; color: #e0e0e0; border-radius: 16px; overflow: hidden;">
       <div style="background: linear-gradient(135deg, #6c5ce7, #a29bfe); padding: 40px; text-align: center;">
-        <h1 style="color: #fff; margin: 0; font-size: 28px;">FiveM MLO Store</h1>
-        <p style="color: rgba(255,255,255,0.8); margin-top: 8px;">Verify your email address</p>
+        <h1 style="color: #fff; margin: 0; font-size: 28px;">𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤</h1>
+        <p style="color: rgba(255,255,255,0.8); margin-top: 8px;">Verify your email address • تحقق من بريدك الإلكتروني</p>
       </div>
       <div style="padding: 40px;">
         <p style="color: #b0b0c0;">Thank you for registering! Use the code below to activate your account:</p>
+        <p style="color: #888; font-size: 13px;">شكراً لتسجيلك! استخدم الرمز أدناه لتفعيل حسابك:</p>
         <div style="background: #1a1a2e; border-radius: 12px; padding: 24px; text-align: center; margin: 24px 0; border: 1px solid #6c5ce7;">
           <span style="font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #a29bfe;">${code}</span>
         </div>
-        <p style="color: #888; font-size: 13px;">This code expires in 15 minutes.</p>
-        <p style="color: #888; font-size: 13px;">If you didn't request this, please ignore this email.</p>
+        <p style="color: #888; font-size: 13px;">This code expires in 15 minutes • ينتهي الكود بعد 15 دقيقة</p>
+        <p style="color: #888; font-size: 13px;">If you didn't request this, please ignore this email • إذا لم تطلب هذا، تجاهل هذه الرسالة</p>
       </div>
       <div style="background: #1a1a2e; padding: 20px; text-align: center; border-top: 1px solid #2a2a3e;">
-        <p style="color: #666; font-size: 12px; margin: 0;">&copy; 2024 FiveM MLO Store. All rights reserved.</p>
+        <p style="color: #666; font-size: 12px; margin: 0;">&copy; 2026 𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤. All rights reserved • جميع الحقوق محفوظة</p>
       </div>
     </div>`,
   });
@@ -59,7 +60,7 @@ const sendResetPasswordEmail = async (to, code) => {
   if (!sg) throw new Error('Email not configured');
   await sg.send({
     to, from: fromEmail,
-    subject: 'Reset your password - FiveM MLO Store',
+    subject: 'Reset your password - 𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤',
     html: `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0f0f1a; color: #e0e0e0; border-radius: 16px; overflow: hidden;">
       <div style="background: linear-gradient(135deg, #e17055, #fdcb6e); padding: 40px; text-align: center;">
@@ -88,7 +89,7 @@ const sendOrderConfirmation = async (to, order) => {
   `).join('');
   await sg.send({
     to, from: fromEmail,
-    subject: 'Order Confirmed - FiveM MLO Store',
+    subject: 'Order Confirmed • تم تأكيد الطلب - 𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤',
     html: `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0f0f1a; color: #e0e0e0; border-radius: 16px; overflow: hidden;">
       <div style="background: linear-gradient(135deg, #00b894, #00cec9); padding: 40px; text-align: center;">
@@ -114,7 +115,7 @@ const sendOrderConfirmation = async (to, order) => {
         <a href="${config.frontendUrl}/dashboard/orders" style="display: block; background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: #fff; text-align: center; padding: 16px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 32px;">View My Orders</a>
       </div>
       <div style="background: #1a1a2e; padding: 20px; text-align: center; border-top: 1px solid #2a2a3e;">
-        <p style="color: #666; font-size: 12px; margin: 0;">&copy; 2024 FiveM MLO Store. All rights reserved.</p>
+        <p style="color: #666; font-size: 12px; margin: 0;">&copy; 2026 𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤. All rights reserved • جميع الحقوق محفوظة</p>
       </div>
     </div>`,
   });

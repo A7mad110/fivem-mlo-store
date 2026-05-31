@@ -50,7 +50,7 @@ export default function App() {
           <Route path="/setup" element={<ProtectedRoute><Setup /></ProtectedRoute>} />
           <Route path="/contact" element={<SimplePage title="Contact Us">Get in touch with our support team. We typically respond within 24 hours. Email: support@mlostore.com</SimplePage>} />
           <Route path="/faq" element={<SimplePage title="FAQ">Find answers to common questions about our products, delivery, and support.</SimplePage>} />
-          <Route path="/terms" element={<SimplePage title="Terms of Service">By purchasing from MLO Store, you agree to our terms. All digital products are non-refundable after download.</SimplePage>} />
+          <Route path="/terms" element={<SimplePage title="Terms of Service">By purchasing from 𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤, you agree to our terms. All digital products are non-refundable after download. • بالشراء من 𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤، أنت توافق على شروطنا. جميع المنتجات الرقمية غير قابلة للاسترداد بعد التحميل.</SimplePage>} />
           <Route path="/refund" element={<SimplePage title="Refund Policy">We offer a 14-day refund policy for unused products. Contact support for assistance.</SimplePage>} />
           <Route path="*" element={<NotFound />} />
         </Routes>

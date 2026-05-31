@@ -209,7 +209,7 @@ if (buildPath) {
 } else {
   console.warn('Build folder not found. Tried:', buildPaths.join(', '));
   app.get('/', (req, res) => {
-    res.send('<h1>FiveM MLO Store API</h1><p>API is running. Frontend build not found.</p>');
+    res.send('<h1>𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤 API</h1><p>API is running. Frontend build not found.</p>');
   });
 }
 
