@@ -1,6 +1,7 @@
 const Product = require('../models/Product');
 const Order = require('../models/Order');
 const User = require('../models/User');
+const Setting = require('../models/Setting');
 const { sendProductCreated, sendProductUpdated, sendProductDeleted } = require('../utils/discord');
 
 exports.getDashboard = async (req, res) => {
@@ -166,5 +167,60 @@ exports.deleteUser = async (req, res) => {
   } catch (err) {
     console.error('Delete user error:', err);
     res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.getWebhookSettings = async (req, res) => {
+  try {
+    const [userSetting, adminSetting] = await Promise.all([
+      Setting.findOne({ key: 'discord_webhook_user' }).lean(),
+      Setting.findOne({ key: 'discord_webhook_admin' }).lean(),
+    ]);
+    res.json({
+      userWebhook: userSetting?.value || '',
+      adminWebhook: adminSetting?.value || '',
+    });
+  } catch (err) {
+    console.error('Get webhook settings error:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.updateWebhookSettings = async (req, res) => {
+  try {
+    const { userWebhook, adminWebhook } = req.body;
+    if (userWebhook !== undefined) {
+      await Setting.findOneAndUpdate(
+        { key: 'discord_webhook_user' },
+        { value: userWebhook },
+        { upsert: true },
+      );
+    }
+    if (adminWebhook !== undefined) {
+      await Setting.findOneAndUpdate(
+        { key: 'discord_webhook_admin' },
+        { value: adminWebhook },
+        { upsert: true },
+      );
+    }
+    const discord = require('../utils/discord');
+    await discord.loadWebhooks();
+    res.json({ message: 'Webhooks updated' });
+  } catch (err) {
+    console.error('Update webhook settings error:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.testWebhook = async (req, res) => {
+  try {
+    const { webhookUrl, type } = req.body;
+    if (!webhookUrl) return res.status(400).json({ message: 'Webhook URL is required' });
+    const { sendTestWebhook } = require('../utils/discord');
+    await sendTestWebhook(webhookUrl, type || 'user');
+    res.json({ message: 'Test sent' });
+  } catch (err) {
+    console.error('Test webhook error:', err);
+    res.status(500).json({ message: 'Failed to send test' });
   }
 };

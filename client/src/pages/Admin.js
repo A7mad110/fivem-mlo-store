@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiPackage, FiUsers, FiShoppingCart, FiDollarSign, FiPlus, FiEdit2, FiTrash2, FiX, FiUserX, FiPercent, FiSettings, FiRotateCcw } from 'react-icons/fi';
+import { FiPackage, FiUsers, FiShoppingCart, FiDollarSign, FiPlus, FiEdit2, FiTrash2, FiX, FiUserX, FiPercent, FiSettings, FiRotateCcw, FiLink, FiSend } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { useTheme, applyTheme } from '../context/ThemeContext';
 import toast from 'react-hot-toast';
@@ -19,6 +19,9 @@ export default function Admin() {
   const [showCouponModal, setShowCouponModal] = useState(false);
   const [editingCoupon, setEditingCoupon] = useState(null);
   const [themeSaving, setThemeSaving] = useState(false);
+  const [webhookForm, setWebhookForm] = useState({ userWebhook: '', adminWebhook: '' });
+  const [webhookSaving, setWebhookSaving] = useState(false);
+  const [webhookTesting, setWebhookTesting] = useState({ user: false, admin: false });
 
   useEffect(() => {
     if (tab === 'dashboard') api.get('/admin/dashboard').then(({ data }) => setDashboard(data)).catch(() => {});
@@ -26,6 +29,7 @@ export default function Admin() {
     if (tab === 'orders') api.get('/admin/orders').then(({ data }) => setOrders(data.orders || [])).catch(() => {});
     if (tab === 'users') api.get('/admin/users').then(({ data }) => setUsers(data.users || [])).catch(() => {});
     if (tab === 'coupons') api.get('/admin/coupons').then(({ data }) => setCoupons(data.coupons || [])).catch(() => {});
+    if (tab === 'webhooks') api.get('/admin/webhooks').then(({ data }) => setWebhookForm(data)).catch(() => {});
   }, [tab, api]);
 
   useEffect(() => {
@@ -148,6 +152,7 @@ export default function Admin() {
     { id: 'users', label: 'Users', icon: <FiUsers /> },
     { id: 'coupons', label: 'Coupons', icon: <FiPercent /> },
     { id: 'theme', label: 'Theme', icon: <FiSettings /> },
+    { id: 'webhooks', label: 'Webhooks', icon: <FiLink /> },
   ];
 
   return (
@@ -281,6 +286,98 @@ export default function Admin() {
               ))}
             </div>
           </>
+        )}
+
+        {tab === 'webhooks' && (
+          <div className="admin-section" style={{ maxWidth: '700px' }}>
+            <div className="admin-header">
+              <h1>Discord Webhooks</h1>
+            </div>
+            <p style={{ marginBottom: '20px', opacity: 0.7 }}>Configure the Discord webhooks for logging. Leave empty to keep the current default.</p>
+
+            <div className="form-group">
+              <label>👤 User Webhook URL</label>
+              <p style={{ fontSize: '13px', opacity: 0.5, marginBottom: '6px' }}>Notifications for registrations, logins, and purchases</p>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input
+                  value={webhookForm.userWebhook}
+                  onChange={e => setWebhookForm({ ...webhookForm, userWebhook: e.target.value })}
+                  placeholder="https://discord.com/api/webhooks/..."
+                  style={{ flex: 1, fontFamily: 'monospace', fontSize: '13px' }}
+                />
+                <button
+                  className="btn-secondary"
+                  onClick={async () => {
+                    setWebhookTesting({ ...webhookTesting, user: true });
+                    try {
+                      await api.post('/admin/webhooks/test', { webhookUrl: webhookForm.userWebhook, type: 'user' });
+                      toast.success('Test sent! Check your Discord');
+                    } catch { toast.error('Test failed'); }
+                    setWebhookTesting({ ...webhookTesting, user: false });
+                  }}
+                  disabled={webhookTesting.user || !webhookForm.userWebhook}
+                  style={{ whiteSpace: 'nowrap' }}
+                >
+                  {webhookTesting.user ? 'Sending...' : <><FiSend /> Test</>}
+                </button>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label>🛠️ Admin Webhook URL</label>
+              <p style={{ fontSize: '13px', opacity: 0.5, marginBottom: '6px' }}>Notifications for product create/update/delete actions</p>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input
+                  value={webhookForm.adminWebhook}
+                  onChange={e => setWebhookForm({ ...webhookForm, adminWebhook: e.target.value })}
+                  placeholder="https://discord.com/api/webhooks/..."
+                  style={{ flex: 1, fontFamily: 'monospace', fontSize: '13px' }}
+                />
+                <button
+                  className="btn-secondary"
+                  onClick={async () => {
+                    setWebhookTesting({ ...webhookTesting, admin: true });
+                    try {
+                      await api.post('/admin/webhooks/test', { webhookUrl: webhookForm.adminWebhook, type: 'admin' });
+                      toast.success('Test sent! Check your Discord');
+                    } catch { toast.error('Test failed'); }
+                    setWebhookTesting({ ...webhookTesting, admin: false });
+                  }}
+                  disabled={webhookTesting.admin || !webhookForm.adminWebhook}
+                  style={{ whiteSpace: 'nowrap' }}
+                >
+                  {webhookTesting.admin ? 'Sending...' : <><FiSend /> Test</>}
+                </button>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+              <button
+                className="btn-primary"
+                onClick={async () => {
+                  setWebhookSaving(true);
+                  try {
+                    await api.put('/admin/webhooks', webhookForm);
+                    toast.success('Webhooks saved!');
+                  } catch (err) {
+                    toast.error(err.response?.data?.message || 'Save failed');
+                  }
+                  setWebhookSaving(false);
+                }}
+                disabled={webhookSaving}
+                style={{ padding: '12px 32px', fontSize: '16px' }}
+              >
+                {webhookSaving ? 'Saving...' : 'Save Webhooks'}
+              </button>
+              <button
+                className="btn-secondary"
+                onClick={() => api.get('/admin/webhooks').then(({ data }) => setWebhookForm(data)).catch(() => {})}
+                style={{ padding: '12px 24px' }}
+              >
+                Reset Form
+              </button>
+            </div>
+          </div>
         )}
 
         {tab === 'theme' && (

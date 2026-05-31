@@ -20,5 +20,8 @@ router.get('/coupons', couponCtrl.getAllCoupons);
 router.post('/coupons', couponCtrl.createCoupon);
 router.put('/coupons/:id', couponCtrl.updateCoupon);
 router.delete('/coupons/:id', couponCtrl.deleteCoupon);
+router.get('/webhooks', adminCtrl.getWebhookSettings);
+router.put('/webhooks', adminCtrl.updateWebhookSettings);
+router.post('/webhooks/test', adminCtrl.testWebhook);
 
 module.exports = router;

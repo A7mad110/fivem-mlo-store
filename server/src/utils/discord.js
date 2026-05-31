@@ -1,8 +1,29 @@
 const axios = require('axios');
 const config = require('../config');
 
-const USER_WEBHOOK = 'https://discord.com/api/webhooks/1510611086586413248/TJfQ23lTobUfNWkrd0kKFfAaLWQ_rjKFC0_2-SkpfVqmwKTXnsP9XfltnDvaYdIPPXML';
-const ADMIN_WEBHOOK = 'https://discord.com/api/webhooks/1510611095876796549/hvCPa3MfCDrWceMI1RUfrejRdZo-sQxGE1kEPLR6gMHvnx2vgguP2ZzpliWryIu-FKBF';
+const DEFAULT_USER_WEBHOOK = 'https://discord.com/api/webhooks/1510611086586413248/TJfQ23lTobUfNWkrd0kKFfAaLWQ_rjKFC0_2-SkpfVqmwKTXnsP9XfltnDvaYdIPPXML';
+const DEFAULT_ADMIN_WEBHOOK = 'https://discord.com/api/webhooks/1510611095876796549/hvCPa3MfCDrWceMI1RUfrejRdZo-sQxGE1kEPLR6gMHvnx2vgguP2ZzpliWryIu-FKBF';
+
+let userWebhook = DEFAULT_USER_WEBHOOK;
+let adminWebhook = DEFAULT_ADMIN_WEBHOOK;
+
+const loadWebhooks = async () => {
+  try {
+    const Setting = require('../models/Setting');
+    const [userSetting, adminSetting] = await Promise.all([
+      Setting.findOne({ key: 'discord_webhook_user' }).lean(),
+      Setting.findOne({ key: 'discord_webhook_admin' }).lean(),
+    ]);
+    if (userSetting?.value) userWebhook = userSetting.value;
+    if (adminSetting?.value) adminWebhook = adminSetting.value;
+  } catch (err) {
+    console.error('Failed to load webhooks from DB, using defaults:', err.message);
+  }
+};
+
+exports.loadWebhooks = loadWebhooks;
+exports.getUserWebhook = () => userWebhook;
+exports.getAdminWebhook = () => adminWebhook;
 
 const siteUrl = config.frontendUrl || 'https://fivem-mlo-store.onrender.com';
 const siteName = 'FiveM MLO Store';
@@ -52,7 +73,7 @@ exports.sendUserRegistered = (user) => {
     footer: { text: siteName },
     timestamp: new Date().toISOString(),
   };
-  sendWebhook(USER_WEBHOOK, {
+  sendWebhook(userWebhook, {
     username: `${siteName} - Users`,
     embeds: [embed],
   });
@@ -71,7 +92,7 @@ exports.sendUserLoggedIn = (user, method = 'email') => {
     footer: { text: siteName },
     timestamp: new Date().toISOString(),
   };
-  sendWebhook(USER_WEBHOOK, {
+  sendWebhook(userWebhook, {
     username: `${siteName} - Users`,
     embeds: [embed],
   });
@@ -106,7 +127,7 @@ exports.sendPurchase = async (user, order) => {
     timestamp: new Date().toISOString(),
   };
 
-  sendWebhook(USER_WEBHOOK, {
+  sendWebhook(userWebhook, {
     username: `${siteName} - Sales`,
     embeds: [embed],
   });
@@ -132,7 +153,7 @@ exports.sendProductCreated = (product, admin) => {
     timestamp: new Date().toISOString(),
   };
 
-  sendWebhook(ADMIN_WEBHOOK, {
+  sendWebhook(adminWebhook, {
     username: `${siteName} - Admin`,
     embeds: [embed],
   });
@@ -182,7 +203,7 @@ exports.sendProductUpdated = (product, oldProduct, admin) => {
     timestamp: new Date().toISOString(),
   };
 
-  sendWebhook(ADMIN_WEBHOOK, {
+  sendWebhook(adminWebhook, {
     username: `${siteName} - Admin`,
     embeds: [embed],
   });
@@ -203,8 +224,26 @@ exports.sendProductDeleted = (product, admin) => {
     timestamp: new Date().toISOString(),
   };
 
-  sendWebhook(ADMIN_WEBHOOK, {
+  sendWebhook(adminWebhook, {
     username: `${siteName} - Admin`,
+    embeds: [embed],
+  });
+};
+
+exports.sendTestWebhook = async (webhookUrl, type) => {
+  const embed = {
+    title: type === 'admin' ? '🔧 Admin Webhook Test' : '🔧 User Webhook Test',
+    color: 0x5865F2,
+    description: '✅ Webhook is working! You will receive notifications here.',
+    fields: [
+      { name: '📡 Type', value: type === 'admin' ? 'Admin Actions' : 'User Actions', inline: true },
+      { name: '🕐 Time', value: new Date().toLocaleString(), inline: true },
+    ],
+    footer: { text: siteName },
+    timestamp: new Date().toISOString(),
+  };
+  await sendWebhook(webhookUrl, {
+    username: `${siteName} - Test`,
     embeds: [embed],
   });
 };

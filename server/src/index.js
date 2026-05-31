@@ -20,6 +20,7 @@ const User = require('./models/User');
 const Product = require('./models/Product');
 const seedProducts = require('./data/products');
 const { configureEmail } = require('./utils/email');
+const { loadWebhooks } = require('./utils/discord');
 
 const app = express();
 
@@ -213,8 +214,9 @@ if (buildPath) {
 }
 
 mongoose.connect(config.mongoUri)
-  .then(() => {
+  .then(async () => {
     console.log('MongoDB connected');
+    await loadWebhooks();
     app.listen(config.port, () => {
       console.log(`Server running on port ${config.port}`);
     });
