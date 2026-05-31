@@ -12,5 +12,6 @@ router.post('/forgot-password', authCtrl.forgotPassword);
 router.post('/reset-password', authCtrl.resetPassword);
 router.get('/discord', authCtrl.discordAuth);
 router.get('/discord/callback', authCtrl.discordCallback);
+router.post('/discord/exchange', authCtrl.exchangeTempToken);
 
 module.exports = router;

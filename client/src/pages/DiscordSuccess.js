@@ -1,26 +1,20 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
+
+const API = process.env.REACT_APP_API_URL || '/api';
 
 export default function DiscordSuccess() {
-  const { fetchUser } = useAuth();
-  const navigate = useNavigate();
-
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const urlToken = params.get('token');
-    const cookieMatch = document.cookie.match(/(^| )discord_token=([^;]+)/);
-    const cookieToken = cookieMatch ? decodeURIComponent(cookieMatch[2]) : null;
-    const t = urlToken || cookieToken || localStorage.getItem('token');
-    if (t) {
-      localStorage.setItem('token', t);
-      fetchUser().then((ok) => {
-        navigate(ok ? '/dashboard' : '/login', { replace: true });
-      });
-    } else {
-      navigate('/login', { replace: true });
-    }
-  }, [fetchUser, navigate]);
+    const temp = params.get('temp');
+    if (!temp) { window.location.href = '/login'; return; }
+    axios.post(`${API}/auth/discord/exchange`, { temp })
+      .then(({ data }) => {
+        localStorage.setItem('token', data.token);
+        window.location.href = '/dashboard';
+      })
+      .catch(() => { window.location.href = '/login'; });
+  }, []);
 
   return (
     <div className="loading-screen">

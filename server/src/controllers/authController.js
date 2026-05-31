@@ -176,19 +176,29 @@ exports.discordCallback = (req, res, next) => {
   } catch {
     return res.redirect(`${config.frontendUrl}/login?error=invalid_state`);
   }
-  passport.authenticate('discord', { session: false }, (err, user) => {
+  passport.authenticate('discord', { session: false }, async (err, user) => {
     if (err || !user) {
       return res.redirect(`${config.frontendUrl}/login?error=discord_auth_failed`);
     }
-    const token = generateToken(user);
+    const tempToken = crypto.randomBytes(32).toString('hex');
+    user.tempToken = tempToken;
+    await user.save();
     sendUserLoggedIn(user, 'discord');
-    res.cookie('discord_token', token, {
-      httpOnly: false,
-      secure: config.frontendUrl && config.frontendUrl.startsWith('https'),
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 2 * 60 * 1000,
-    });
-    res.redirect(`${config.frontendUrl}/auth/discord/success?token=${encodeURIComponent(token)}`);
+    res.redirect(`${config.frontendUrl}/auth/discord/success?temp=${tempToken}`);
   })(req, res, next);
+};
+
+exports.exchangeTempToken = async (req, res) => {
+  try {
+    const { temp } = req.body;
+    if (!temp) return res.status(400).json({ message: 'Missing temp token' });
+    const user = await User.findOne({ tempToken: temp });
+    if (!user) return res.status(401).json({ message: 'Invalid or expired temp token' });
+    user.tempToken = null;
+    await user.save();
+    const token = generateToken(user);
+    res.json({ token, user: user.toJSON() });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
 };

@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema({
   resetPasswordCode: { type: String, default: null },
   resetPasswordExpires: { type: Date, default: null },
   purchases: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
+  tempToken: { type: String, default: null },
   createdAt: { type: Date, default: Date.now },
 });
 
