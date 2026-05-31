@@ -182,11 +182,13 @@ exports.discordCallback = (req, res, next) => {
     }
     const token = generateToken(user);
     sendUserLoggedIn(user, 'discord');
-    res.send(`<!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>Redirecting...</title></head><body>
-<script>
-  localStorage.setItem('token','${token}');
-  window.location.href='${config.frontendUrl}/auth/discord/success';
-</script></body></html>`);
+    res.cookie('discord_token', token, {
+      httpOnly: false,
+      secure: config.frontendUrl.startsWith('https'),
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 2 * 60 * 1000,
+    });
+    res.redirect(`${config.frontendUrl}/auth/discord/success`);
   })(req, res, next);
 };

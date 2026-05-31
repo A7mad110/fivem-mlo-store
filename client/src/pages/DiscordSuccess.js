@@ -7,8 +7,10 @@ export default function DiscordSuccess() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const t = localStorage.getItem('token');
+    const match = document.cookie.match(/(^| )discord_token=([^;]+)/);
+    const t = match ? decodeURIComponent(match[2]) : localStorage.getItem('token');
     if (t) {
+      localStorage.setItem('token', t);
       fetchUser().then((ok) => {
         navigate(ok ? '/dashboard' : '/login', { replace: true });
       });
