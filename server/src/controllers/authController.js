@@ -166,16 +166,16 @@ exports.getMe = async (req, res) => {
 const passport = require('../config/passport');
 
 exports.discordAuth = (req, res, next) => {
-  const state = crypto.randomBytes(16).toString('hex');
-  req.session.discordState = state;
+  const state = jwt.sign({ data: crypto.randomBytes(16).toString('hex') }, config.jwtSecret, { expiresIn: '30m' });
   passport.authenticate('discord', { state })(req, res, next);
 };
 
 exports.discordCallback = (req, res, next) => {
-  if (req.session.discordState && req.query.state !== req.session.discordState) {
+  try {
+    jwt.verify(req.query.state, config.jwtSecret);
+  } catch {
     return res.redirect(`${config.frontendUrl}/login?error=invalid_state`);
   }
-  if (req.session.discordState) delete req.session.discordState;
   passport.authenticate('discord', { session: false }, (err, user) => {
     if (err || !user) {
       return res.redirect(`${config.frontendUrl}/login?error=discord_auth_failed`);
