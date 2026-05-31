@@ -168,17 +168,14 @@ const passport = require('../config/passport');
 exports.discordAuth = (req, res, next) => {
   const state = crypto.randomBytes(16).toString('hex');
   req.session.discordState = state;
-  req.session.save((err) => {
-    if (err) return next(err);
-    passport.authenticate('discord', { state })(req, res, next);
-  });
+  passport.authenticate('discord', { state })(req, res, next);
 };
 
 exports.discordCallback = (req, res, next) => {
-  if (req.query.state !== req.session.discordState) {
+  if (req.session.discordState && req.query.state !== req.session.discordState) {
     return res.redirect(`${config.frontendUrl}/login?error=invalid_state`);
   }
-  delete req.session.discordState;
+  if (req.session.discordState) delete req.session.discordState;
   passport.authenticate('discord', { session: false }, (err, user) => {
     if (err || !user) {
       return res.redirect(`${config.frontendUrl}/login?error=discord_auth_failed`);
