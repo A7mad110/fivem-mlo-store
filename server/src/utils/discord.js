@@ -28,9 +28,14 @@ exports.getAdminWebhook = () => adminWebhook;
 const siteUrl = config.frontendUrl || 'https://fivem-mlo-store.onrender.com';
 const siteName = 'FiveM MLO Store';
 
-const sendWebhook = async (url, payload) => {
+const sendWebhook = async (url, payload, pingEveryone = false) => {
   try {
-    await axios.post(url, payload, {
+    const data = { ...payload };
+    if (pingEveryone) {
+      data.content = '@everyone';
+      data.allowed_mentions = { parse: ['everyone'] };
+    }
+    await axios.post(url, data, {
       headers: { 'Content-Type': 'application/json' },
       timeout: 5000,
     });
@@ -156,7 +161,7 @@ exports.sendProductCreated = (product, admin) => {
   sendWebhook(adminWebhook, {
     username: `${siteName} - Admin`,
     embeds: [embed],
-  });
+  }, true);
 };
 
 exports.sendProductUpdated = (product, oldProduct, admin) => {
@@ -203,10 +208,11 @@ exports.sendProductUpdated = (product, oldProduct, admin) => {
     timestamp: new Date().toISOString(),
   };
 
+  const shouldPing = changes.some(c => c.includes('**Sale') || c.includes('💰 **Price:**'));
   sendWebhook(adminWebhook, {
     username: `${siteName} - Admin`,
     embeds: [embed],
-  });
+  }, shouldPing);
 };
 
 exports.sendProductDeleted = (product, admin) => {
@@ -227,7 +233,7 @@ exports.sendProductDeleted = (product, admin) => {
   sendWebhook(adminWebhook, {
     username: `${siteName} - Admin`,
     embeds: [embed],
-  });
+  }, true);
 };
 
 exports.sendTestWebhook = async (webhookUrl, type) => {
