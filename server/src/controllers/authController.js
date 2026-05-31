@@ -6,7 +6,7 @@ const { sendVerificationEmail, sendResetPasswordEmail } = require('../utils/emai
 const { sendUserRegistered, sendUserLoggedIn } = require('../utils/discord');
 
 const generateToken = (user) => {
-  return jwt.sign({ id: user._id, role: user.role }, config.jwtSecret, { expiresIn: '7d' });
+  return jwt.sign({ id: user._id.toString(), role: user.role }, config.jwtSecret, { algorithm: 'HS256', expiresIn: '7d' });
 };
 
 const generateCode = () => crypto.randomInt(100000, 999999).toString();
