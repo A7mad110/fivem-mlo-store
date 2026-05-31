@@ -26,7 +26,8 @@ exports.getUserWebhook = () => userWebhook;
 exports.getAdminWebhook = () => adminWebhook;
 
 const siteUrl = config.frontendUrl || 'https://fivem-mlo-store.onrender.com';
-const siteName = 'FiveM MLO Store';
+const siteName = '𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤';
+const footerText = `𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤 • جميع الحقوق محفوظة ${new Date().getFullYear()} © All rights reserved`;
 
 const sendWebhook = async (url, payload, pingEveryone = false) => {
   try {
@@ -65,40 +66,72 @@ const getProductImage = (product) => {
   return '';
 };
 
+const ar = {
+  registered: '📝 تسجيل جديد • New Registration',
+  loggedIn: '🔑 تسجيل دخول • User Login',
+  discordLogin: '🔑 دخول عبر ديسكورد • Discord Login',
+  purchase: '🛒 عملية شراء جديدة • New Purchase!',
+  productCreated: '🆕 منتج جديد • New Product Added',
+  productUpdated: '✏️ تحديث منتج • Product Updated',
+  productDeleted: '🗑️ حذف منتج • Product Deleted',
+  testUser: '🔧 اختبار • User Webhook Test',
+  testAdmin: '🔧 اختبار • Admin Webhook Test',
+  username: '👤 اسم المستخدم • Username',
+  email: '📧 البريد الإلكتروني • Email',
+  id: '🆔 المعرف • ID',
+  method: '🔐 طريقة الدخول • Method',
+  customer: '👤 الزبون • Customer',
+  total: '💰 المجموع • Total',
+  order: '📋 الطلب • Order',
+  items: '📦 المنتجات • Items',
+  links: '🔗 الروابط • Links',
+  product: '📦 المنتج • Product',
+  price: '💵 السعر • Price',
+  category: '📂 القسم • Category',
+  addedBy: '👮 أضيف بواسطة • Added by',
+  updatedBy: '👮 حدّث بواسطة • Updated by',
+  deletedBy: '👮 حُذف بواسطة • Deleted by',
+  changes: '📝 التغييرات • Changes',
+  testWorking: '✅ الـ Webhook يعمل بنجاح • Webhook is working!',
+  testDesc: 'ستصلك الإشعارات هنا • You will receive notifications here.',
+  type: '📡 النوع • Type',
+  time: '🕐 الوقت • Time',
+};
+
 exports.sendUserRegistered = (user) => {
   const embed = {
-    title: '📝 New Registration',
+    title: ar.registered,
     color: 0x57F287,
     thumbnail: { url: getUserAvatar(user) },
     fields: [
-      { name: '👤 Username', value: user.username, inline: true },
-      { name: '📧 Email', value: user.email ? `||${user.email}||` : 'Discord', inline: true },
-      { name: '🆔 ID', value: `\`${user._id.toString().slice(-8).toUpperCase()}\``, inline: true },
+      { name: ar.username, value: user.username, inline: true },
+      { name: ar.email, value: user.email ? `||${user.email}||` : 'Discord', inline: true },
+      { name: ar.id, value: `\`${user._id.toString().slice(-8).toUpperCase()}\``, inline: true },
     ],
-    footer: { text: siteName },
+    footer: { text: footerText },
     timestamp: new Date().toISOString(),
   };
   sendWebhook(userWebhook, {
-    username: `${siteName} - Users`,
+    username: `${siteName} • Users`,
     embeds: [embed],
   });
 };
 
 exports.sendUserLoggedIn = (user, method = 'email') => {
   const embed = {
-    title: method === 'discord' ? '🔑 Discord Login' : '🔑 User Login',
+    title: method === 'discord' ? ar.discordLogin : ar.loggedIn,
     color: 0x5865F2,
     thumbnail: { url: getUserAvatar(user) },
     fields: [
-      { name: '👤 Username', value: user.username, inline: true },
-      { name: '🔐 Method', value: method === 'discord' ? 'Discord OAuth2' : 'Email/Password', inline: true },
-      { name: '🆔 ID', value: `\`${user._id.toString().slice(-8).toUpperCase()}\``, inline: true },
+      { name: ar.username, value: user.username, inline: true },
+      { name: ar.method, value: method === 'discord' ? 'Discord OAuth2' : 'Email/Password', inline: true },
+      { name: ar.id, value: `\`${user._id.toString().slice(-8).toUpperCase()}\``, inline: true },
     ],
-    footer: { text: siteName },
+    footer: { text: footerText },
     timestamp: new Date().toISOString(),
   };
   sendWebhook(userWebhook, {
-    username: `${siteName} - Users`,
+    username: `${siteName} • Users`,
     embeds: [embed],
   });
 };
@@ -118,22 +151,22 @@ exports.sendPurchase = async (user, order) => {
   const thumb = firstProduct ? getProductImage(firstProduct) : getUserAvatar(user);
 
   const embed = {
-    title: '🛒 New Purchase!',
+    title: ar.purchase,
     color: 0xFEE75C,
     thumbnail: { url: thumb },
     fields: [
-      { name: '👤 Customer', value: user.username, inline: true },
-      { name: '💰 Total', value: `**$${order.totalAmount.toFixed(2)}**`, inline: true },
-      { name: '📋 Order', value: `\`${order._id.toString().slice(-8).toUpperCase()}\``, inline: true },
-      { name: '📦 Items', value: itemsList || 'N/A', inline: false },
-      { name: '🔗 Links', value: productLinks || 'N/A', inline: false },
+      { name: ar.customer, value: user.username, inline: true },
+      { name: ar.total, value: `**$${order.totalAmount.toFixed(2)}**`, inline: true },
+      { name: ar.order, value: `\`${order._id.toString().slice(-8).toUpperCase()}\``, inline: true },
+      { name: ar.items, value: itemsList || 'N/A', inline: false },
+      { name: ar.links, value: productLinks || 'N/A', inline: false },
     ],
-    footer: { text: `${siteName} • Payment: ${order.paymentMethod}` },
+    footer: { text: `${footerText} • ${order.paymentMethod}` },
     timestamp: new Date().toISOString(),
   };
 
   sendWebhook(userWebhook, {
-    username: `${siteName} - Sales`,
+    username: `${siteName} • Sales`,
     embeds: [embed],
   });
 };
@@ -144,22 +177,22 @@ exports.sendProductCreated = (product, admin) => {
     : `**$${product.price.toFixed(2)}**`;
 
   const embed = {
-    title: '🆕 New Product Added',
+    title: ar.productCreated,
     color: 0x57F287,
     thumbnail: { url: getProductImage(product) || 'https://ui-avatars.com/api/?name=New&background=57F287&color=fff&size=128' },
     fields: [
-      { name: '📦 Product', value: `[${product.name}](${siteUrl}/shop/${product.slug})`, inline: true },
-      { name: '💵 Price', value: price, inline: true },
-      { name: '📂 Category', value: product.category.toUpperCase(), inline: true },
-      { name: '👮 Added by', value: admin.username, inline: false },
+      { name: ar.product, value: `[${product.name}](${siteUrl}/shop/${product.slug})`, inline: true },
+      { name: ar.price, value: price, inline: true },
+      { name: ar.category, value: product.category.toUpperCase(), inline: true },
+      { name: ar.addedBy, value: admin.username, inline: false },
     ],
     url: `${siteUrl}/shop/${product.slug}`,
-    footer: { text: siteName },
+    footer: { text: footerText },
     timestamp: new Date().toISOString(),
   };
 
   sendWebhook(adminWebhook, {
-    username: `${siteName} - Admin`,
+    username: `${siteName} • Admin`,
     embeds: [embed],
   }, true);
 };
@@ -194,62 +227,62 @@ exports.sendProductUpdated = (product, oldProduct, admin) => {
   if (changes.length === 0) return;
 
   const embed = {
-    title: '✏️ Product Updated',
+    title: ar.productUpdated,
     color: 0xFEE75C,
     thumbnail: { url: getProductImage(product) || 'https://ui-avatars.com/api/?name=Updated&background=FEE75C&color=fff&size=128' },
     fields: [
-      { name: '📦 Product', value: `[${product.name}](${siteUrl}/shop/${product.slug})`, inline: true },
-      { name: '📂 Category', value: product.category.toUpperCase(), inline: true },
-      { name: '📝 Changes', value: changes.join('\n'), inline: false },
-      { name: '👮 Updated by', value: admin.username, inline: false },
+      { name: ar.product, value: `[${product.name}](${siteUrl}/shop/${product.slug})`, inline: true },
+      { name: ar.category, value: product.category.toUpperCase(), inline: true },
+      { name: ar.changes, value: changes.join('\n'), inline: false },
+      { name: ar.updatedBy, value: admin.username, inline: false },
     ],
     url: `${siteUrl}/shop/${product.slug}`,
-    footer: { text: siteName },
+    footer: { text: footerText },
     timestamp: new Date().toISOString(),
   };
 
-  const shouldPing = changes.some(c => c.includes('**Sale') || c.includes('💰 **Price:**'));
+  const shouldPing = changes.some(c => c.includes('**Sale') || c.includes('💰'));
   sendWebhook(adminWebhook, {
-    username: `${siteName} - Admin`,
+    username: `${siteName} • Admin`,
     embeds: [embed],
   }, shouldPing);
 };
 
 exports.sendProductDeleted = (product, admin) => {
   const embed = {
-    title: '🗑️ Product Deleted',
+    title: ar.productDeleted,
     color: 0xED4245,
     thumbnail: { url: getProductImage(product) || 'https://ui-avatars.com/api/?name=Deleted&background=ED4245&color=fff&size=128' },
     fields: [
-      { name: '📦 Product', value: product.name, inline: true },
-      { name: '💵 Price', value: `$${product.price.toFixed(2)}`, inline: true },
-      { name: '📂 Category', value: product.category.toUpperCase(), inline: true },
-      { name: '👮 Deleted by', value: admin.username, inline: false },
+      { name: ar.product, value: product.name, inline: true },
+      { name: ar.price, value: `$${product.price.toFixed(2)}`, inline: true },
+      { name: ar.category, value: product.category.toUpperCase(), inline: true },
+      { name: ar.deletedBy, value: admin.username, inline: false },
     ],
-    footer: { text: siteName },
+    footer: { text: footerText },
     timestamp: new Date().toISOString(),
   };
 
   sendWebhook(adminWebhook, {
-    username: `${siteName} - Admin`,
+    username: `${siteName} • Admin`,
     embeds: [embed],
   }, true);
 };
 
 exports.sendTestWebhook = async (webhookUrl, type) => {
   const embed = {
-    title: type === 'admin' ? '🔧 Admin Webhook Test' : '🔧 User Webhook Test',
+    title: type === 'admin' ? ar.testAdmin : ar.testUser,
     color: 0x5865F2,
-    description: '✅ Webhook is working! You will receive notifications here.',
+    description: `${ar.testWorking}\n${ar.testDesc}`,
     fields: [
-      { name: '📡 Type', value: type === 'admin' ? 'Admin Actions' : 'User Actions', inline: true },
-      { name: '🕐 Time', value: new Date().toLocaleString(), inline: true },
+      { name: ar.type, value: type === 'admin' ? 'Admin Actions' : 'User Actions', inline: true },
+      { name: ar.time, value: new Date().toLocaleString(), inline: true },
     ],
-    footer: { text: siteName },
+    footer: { text: footerText },
     timestamp: new Date().toISOString(),
   };
   await sendWebhook(webhookUrl, {
-    username: `${siteName} - Test`,
+    username: `${siteName} • Test`,
     embeds: [embed],
   });
 };

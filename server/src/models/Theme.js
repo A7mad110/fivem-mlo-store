@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const themeSchema = new mongoose.Schema({
-  siteName: { type: String, default: 'MLO Store' },
+  siteName: { type: String, default: '𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤' },
   siteLogo: { type: String, default: '' },
   favicon: { type: String, default: '' },
 

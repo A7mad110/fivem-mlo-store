@@ -11,7 +11,7 @@ export default function Footer() {
       <div className="footer-inner">
         <div className="footer-grid">
           <div className="footer-section">
-            <h3 className="footer-brand">{theme.siteLogo ? <img src={theme.siteLogo} alt={theme.siteName} style={{ height: '32px' }} /> : '🏙️'} {theme.siteName || 'MLO Store'}</h3>
+            <h3 className="footer-brand">{theme.siteLogo ? <img src={theme.siteLogo} alt={theme.siteName} style={{ height: '32px' }} /> : 'Ⓧ'} {theme.siteName || '𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤'}</h3>
             <p className="footer-desc">{theme.footerText || 'Premium FiveM MLOs, maps, and interiors for your server. Quality assets with fast delivery.'}</p>
             <div className="footer-social">
               <a href="https://www.instagram.com/xds.3d/" className="social-link" target="_blank" rel="noopener noreferrer" title="Instagram"><FaInstagram /></a>
@@ -43,7 +43,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} MLO Store. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} 𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤. جميع الحقوق محفوظة • All rights reserved.</p>
           <div className="footer-payments">
             <span className="payment-badge">Visa</span>
             <span className="payment-badge">MC</span>
