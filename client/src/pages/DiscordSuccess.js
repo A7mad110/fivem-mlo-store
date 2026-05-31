@@ -1,23 +1,21 @@
 import React, { useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function DiscordSuccess() {
-  const [searchParams] = useSearchParams();
-  const { fetchUser, setAuthToken } = useAuth();
+  const { fetchUser } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const t = searchParams.get('token');
+    const t = localStorage.getItem('token');
     if (t) {
-      setAuthToken(t);
       fetchUser().then((ok) => {
         navigate(ok ? '/dashboard' : '/login', { replace: true });
       });
     } else {
       navigate('/login', { replace: true });
     }
-  }, [searchParams, setAuthToken, fetchUser, navigate]);
+  }, [fetchUser, navigate]);
 
   return (
     <div className="loading-screen">
