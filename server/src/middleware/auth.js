@@ -20,8 +20,8 @@ const auth = async (req, res, next) => {
     req.user = user;
     next();
   } catch (err) {
-    console.error('Auth middleware error:', err.message);
-    return res.status(401).json({ message: 'Invalid token' });
+    console.error('Auth error:', err.name, err.message, 'secretLength:', config.jwtSecret ? config.jwtSecret.length : 0);
+    return res.status(401).json({ message: err.message === 'jwt malformed' ? 'Invalid token' : 'Unauthorized' });
   }
 };
 

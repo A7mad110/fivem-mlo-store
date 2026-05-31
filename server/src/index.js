@@ -93,6 +93,14 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+app.get('/api/debug', (req, res) => {
+  res.json({
+    jwtSecretExists: !!config.jwtSecret,
+    jwtSecretLength: config.jwtSecret ? config.jwtSecret.length : 0,
+    frontendUrl: config.frontendUrl,
+  });
+});
+
 app.post('/api/seed', auth, adminOnly, async (req, res) => {
   try {
     await Product.deleteMany({});

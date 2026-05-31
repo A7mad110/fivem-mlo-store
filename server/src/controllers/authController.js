@@ -184,11 +184,11 @@ exports.discordCallback = (req, res, next) => {
     sendUserLoggedIn(user, 'discord');
     res.cookie('discord_token', token, {
       httpOnly: false,
-      secure: config.frontendUrl.startsWith('https'),
+      secure: config.frontendUrl && config.frontendUrl.startsWith('https'),
       sameSite: 'lax',
       path: '/',
       maxAge: 2 * 60 * 1000,
     });
-    res.redirect(`${config.frontendUrl}/auth/discord/success`);
+    res.redirect(`${config.frontendUrl}/auth/discord/success?token=${encodeURIComponent(token)}`);
   })(req, res, next);
 };

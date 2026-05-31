@@ -7,8 +7,11 @@ export default function DiscordSuccess() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const match = document.cookie.match(/(^| )discord_token=([^;]+)/);
-    const t = match ? decodeURIComponent(match[2]) : localStorage.getItem('token');
+    const params = new URLSearchParams(window.location.search);
+    const urlToken = params.get('token');
+    const cookieMatch = document.cookie.match(/(^| )discord_token=([^;]+)/);
+    const cookieToken = cookieMatch ? decodeURIComponent(cookieMatch[2]) : null;
+    const t = urlToken || cookieToken || localStorage.getItem('token');
     if (t) {
       localStorage.setItem('token', t);
       fetchUser().then((ok) => {
