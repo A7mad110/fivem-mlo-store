@@ -3,11 +3,13 @@ import { useNavigate, Link } from 'react-router-dom';
 import { FiLock, FiCheck, FiCreditCard, FiUser, FiPercent } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useLanguage } from '../context/LanguageContext';
 import toast from 'react-hot-toast';
 
 export default function Checkout() {
   const { api, user } = useAuth();
   const { items, totalPrice, clearCart } = useCart();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [completed, setCompleted] = useState(false);
@@ -30,9 +32,9 @@ export default function Checkout() {
       });
       setAppliedCoupon(data.coupon);
       setDiscount(data.discount);
-      toast.success(`Coupon applied! You saved $${data.discount.toFixed(2)}`);
+      toast.success(`${t('checkout.couponApplied')}${data.discount.toFixed(2)}`);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Invalid coupon');
+      toast.error(err.response?.data?.message || t('checkout.invalidCoupon'));
       setAppliedCoupon(null);
       setDiscount(0);
     }
@@ -42,8 +44,8 @@ export default function Checkout() {
   if (items.length === 0 && !completed) {
     return (
       <div className="empty-cart">
-        <h2>Your cart is empty</h2>
-        <Link to="/shop" className="btn-primary">Browse Products</Link>
+        <h2>{t('checkout.empty')}</h2>
+        <Link to="/shop" className="btn-primary">{t('cart.browseProducts')}</Link>
       </div>
     );
   }
@@ -62,9 +64,9 @@ export default function Checkout() {
       await api.post('/orders/confirm', { paymentId: data.order.paymentId || 'demo_' + Date.now() });
       clearCart();
       setCompleted(true);
-      toast.success('Order completed successfully!');
+      toast.success(t('checkout.orderSuccess'));
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Checkout failed');
+      toast.error(err.response?.data?.message || t('checkout.checkoutFailed'));
     }
     setLoading(false);
   };
@@ -73,11 +75,11 @@ export default function Checkout() {
     return (
       <div className="checkout-success">
         <div className="success-icon"><FiCheck /></div>
-        <h1>Order Confirmed!</h1>
-        <p>Thank you for your purchase. You can download your products from your dashboard.</p>
+        <h1>{t('checkout.success.title')}</h1>
+        <p>{t('checkout.success.subtitle')}</p>
         <div className="success-actions">
-          <Link to="/dashboard/orders" className="btn-primary">View My Orders</Link>
-          <Link to="/shop" className="btn-secondary">Continue Shopping</Link>
+          <Link to="/dashboard/orders" className="btn-primary">{t('checkout.success.viewOrders')}</Link>
+          <Link to="/shop" className="btn-secondary">{t('checkout.success.continueShopping')}</Link>
         </div>
       </div>
     );
@@ -86,39 +88,39 @@ export default function Checkout() {
   return (
     <div className="checkout-page">
       <div className="page-header">
-        <h1>Checkout</h1>
+        <h1>{t('checkout.title')}</h1>
       </div>
 
       <div className="checkout-grid">
         <div className="checkout-form-section">
           <div className="checkout-card">
-            <h3><FiUser /> Account</h3>
+            <h3><FiUser /> {t('checkout.account')}</h3>
             <p>{user?.email} {user?.isVerified && <FiCheck className="verified-icon" />}</p>
           </div>
 
           <div className="checkout-card">
-            <h3><FiCreditCard /> Payment</h3>
+            <h3><FiCreditCard /> {t('checkout.payment')}</h3>
             <div className="payment-methods">
               <label className="payment-option selected">
                 <input type="radio" name="payment" defaultChecked />
                 <span className="payment-label">
-                  <FiCreditCard /> Credit / Debit Card
+                  <FiCreditCard /> {t('checkout.creditCard')}
                 </span>
                 <span className="payment-badges">Visa MC AMEX</span>
               </label>
               <div className="payment-note">
-                <FiLock /> Your payment is secured with 256-bit SSL encryption
+                <FiLock /> {t('checkout.securePayment')}
               </div>
             </div>
           </div>
 
           <button className="btn-primary btn-large btn-full" onClick={handleSubmit} disabled={loading}>
-            {loading ? 'Processing...' : `Pay $${finalTotal.toFixed(2)}`}
+            {loading ? t('checkout.processing') : `${t('checkout.pay')} $${finalTotal.toFixed(2)}`}
           </button>
         </div>
 
         <div className="checkout-summary">
-          <h3>Order Summary</h3>
+          <h3>{t('checkout.orderSummary')}</h3>
           <div className="checkout-coupon">
             {appliedCoupon ? (
               <div className="applied-coupon">
@@ -128,10 +130,10 @@ export default function Checkout() {
               </div>
             ) : (
               <div className="coupon-input">
-                <input type="text" placeholder="Coupon code" value={couponCode}
+                <input type="text" placeholder={t('checkout.couponCode')} value={couponCode}
                   onChange={e => setCouponCode(e.target.value.toUpperCase())} />
                 <button onClick={handleApplyCoupon} disabled={couponLoading || !couponCode.trim()}>
-                  {couponLoading ? '...' : 'Apply'}
+                  {couponLoading ? '...' : t('checkout.apply')}
                 </button>
               </div>
             )}
@@ -147,18 +149,18 @@ export default function Checkout() {
           ))}
           <div className="checkout-divider"></div>
           <div className="checkout-total">
-            <span>Subtotal</span>
+            <span>{t('checkout.subtotal')}</span>
             <span>${totalPrice.toFixed(2)}</span>
           </div>
           {discount > 0 && (
             <div className="checkout-total checkout-discount">
-              <span>Discount</span>
+              <span>{t('checkout.discount')}</span>
               <span style={{ color: '#10b981' }}>-${discount.toFixed(2)}</span>
             </div>
           )}
           <div className="checkout-divider"></div>
           <div className="checkout-total">
-            <span>Total</span>
+            <span>{t('checkout.total')}</span>
             <span className="checkout-total-price">${finalTotal.toFixed(2)}</span>
           </div>
         </div>

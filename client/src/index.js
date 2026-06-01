@@ -4,23 +4,31 @@ import { BrowserRouter } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { LanguageProvider } from './context/LanguageContext';
 import App from './App';
 import './styles/App.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <BrowserRouter>
+  <BrowserRouter>
+    <LanguageProvider>
       <AuthProvider>
         <CartProvider>
           <App />
-          <Toaster position="top-right" toastOptions={{
-            style: { background: '#1a1a2e', color: '#e0e0e0', border: '1px solid #2a2a3e', borderRadius: '12px' },
-            success: { iconTheme: { primary: '#00b894', secondary: '#fff' } },
-            error: { iconTheme: { primary: '#e17055', secondary: '#fff' } },
-          }} />
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              duration: 4000,
+              style: {
+                background: 'var(--bg-card)',
+                color: 'var(--text-primary)',
+                borderRadius: 'var(--radius)',
+                border: '1px solid var(--border-color)',
+              },
+            }}
+          />
         </CartProvider>
       </AuthProvider>
-    </BrowserRouter>
-  </React.StrictMode>
+    </LanguageProvider>
+  </BrowserRouter>
 );

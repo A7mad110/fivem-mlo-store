@@ -42,6 +42,25 @@ REACT_APP_API_URL (defaults to '/api')
 - **JWT-based Discord OAuth state** (eliminates session dependency entirely — fixes cross-instance state mismatch on Render)
 - Rebranded all references to 𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤
 - Bilingual email templates, copyright 2026
+- **Full bilingual support (Arabic/English)**:
+  - Created `client/src/locales/en.js` — comprehensive English translations (~260 strings)
+  - Created `client/src/locales/ar.js` — comprehensive Arabic translations (~260 strings)
+  - Created `client/src/context/LanguageContext.js` — language toggle with `t()` function, RTL/LTR, localStorage persistence
+  - Created `client/src/context/ThemeContext.js` — dark/light mode toggle with `toggleMode()`, light color scheme, localStorage persistence
+  - Updated `App.js` — translated SimplePage/contact/faq/terms/refund routes
+  - Updated `index.js` — wrapped with `LanguageProvider`, dir/lang on `<html>`
+  - Updated `Navbar.js` — language toggle (🌐) + theme toggle (☀️/🌙) + translated all nav links
+  - Updated `Footer.js` — translated all links, features, copyright with `t()`
+  - Updated `Home.js` — translated hero, features, featured, categories, CTA, testimonials, stats via `t()`
+  - Updated `Shop.js` — translated title, search, sort labels, empty state via `t()`
+  - Updated `Login.js` — translated form, Discord button, links via `t()`
+  - Updated `Register.js` — translated form, validation messages, buttons via `t()`
+  - Updated `Cart.js` — translated empty state, title, order summary via `t()`
+  - Updated `Checkout.js` — translated account/payment, coupon, success page via `t()`
+  - Updated `Dashboard.js` — translated stats, account info, actions, verify banner via `t()`
+  - Updated `Orders.js` — translated title, empty state, status labels via `t()`
+  - Updated `ProductDetail.js` — translated product info, features, requirements, add to cart via `t()`
+  - Updated `NotFound.js` — translated 404 page via `t()`
 
 ## Current Issues
 - **401 on `/api/auth/me` after Discord callback**: User reports 401 after Discord OAuth login on Render. JWT token is saved to localStorage but rejected by server. Possible causes:

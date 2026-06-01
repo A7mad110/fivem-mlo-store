@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 const API = process.env.REACT_APP_API_URL || '/api';
@@ -19,6 +19,13 @@ const defaultTheme = {
   heroBg: '', bgImage: '', bgRepeat: 'repeat', bgSize: 'auto', customCss: '', footerText: '',
 };
 
+const lightColors = {
+  bgPrimary: '#f5f5fa', bgSecondary: '#eeeef5', bgCard: '#ffffff',
+  bgCardHover: '#f0f0ff', bgInput: '#e8eaf0',
+  borderColor: '#d0d0e0', borderHover: '#a0a0c0',
+  textPrimary: '#1a1a2e', textSecondary: '#555577', textMuted: '#8888aa',
+};
+
 function hexToRgba(hex, alpha) {
   if (!hex || typeof hex !== 'string') return `rgba(108, 92, 231, ${alpha})`;
   const c = hex.replace('#', '');
@@ -33,84 +40,93 @@ function hexToRgba(hex, alpha) {
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(defaultTheme);
   const [loaded, setLoaded] = useState(false);
+  const [mode, setMode] = useState(() => localStorage.getItem('themeMode') || 'dark');
 
   useEffect(() => {
+    localStorage.setItem('themeMode', mode);
+  }, [mode]);
+
+  useEffect(() => {
+    applyTheme(defaultTheme, mode);
     axios.get(`${API}/theme`).then(({ data }) => {
       const merged = { ...defaultTheme, ...data.theme };
-      if (data.theme) {
-        setTheme(merged);
-        applyTheme(merged);
-      }
-    }).catch(() => {
-      applyTheme(defaultTheme);
-    }).finally(() => setLoaded(true));
+      setTheme(merged);
+      applyTheme(merged, mode);
+    }).catch(() => {}).finally(() => setLoaded(true));
+  }, []);
+
+  useEffect(() => {
+    if (loaded) applyTheme(theme, mode);
+  }, [mode, loaded]);
+
+  const toggleMode = useCallback(() => {
+    setMode((m) => (m === 'dark' ? 'light' : 'dark'));
   }, []);
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, loaded, defaultTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme, loaded, defaultTheme, mode, toggleMode }}>
       {children}
     </ThemeContext.Provider>
   );
 }
 
-export function applyTheme(t) {
+export function applyTheme(t, mode) {
   try {
-  const r = document.documentElement;
-  const map = {
-    '--bg-primary': t.bgPrimary,
-    '--bg-secondary': t.bgSecondary,
-    '--bg-card': t.bgCard,
-    '--bg-card-hover': t.bgCardHover,
-    '--bg-input': t.bgInput,
-    '--border-color': t.borderColor,
-    '--border-hover': t.borderHover,
-    '--text-primary': t.textPrimary,
-    '--text-secondary': t.textSecondary,
-    '--text-muted': t.textMuted,
-    '--accent': t.accent,
-    '--accent-light': t.accentLight,
-    '--accent-glow': hexToRgba(t.accent, 0.3),
-    '--success': t.success,
-    '--warning': t.warning,
-    '--danger': t.danger,
-    '--info': t.info,
-    '--radius': `${t.borderRadius}px`,
-    '--radius-lg': `${t.borderRadius + 4}px`,
-    '--radius-xl': `${t.borderRadius + 12}px`,
-  };
-  for (const [key, val] of Object.entries(map)) {
-    if (val) r.style.setProperty(key, val);
-  }
-  if (t.bgImage) {
-    const repeat = t.bgRepeat || 'repeat';
-    const size = t.bgSize || 'auto';
-    document.body.style.backgroundImage = `url(${t.bgImage})`;
-    document.body.style.backgroundRepeat = repeat;
-    document.body.style.backgroundSize = size;
-    document.body.style.backgroundAttachment = 'fixed';
-    document.body.style.backgroundPosition = 'center';
-  } else {
-    document.body.style.backgroundImage = '';
-    document.body.style.backgroundRepeat = '';
-    document.body.style.backgroundSize = '';
-  }
-  if (t.favicon) {
-    let link = document.querySelector('link[rel="icon"]');
-    if (!link) {
-      link = document.createElement('link');
-      link.rel = 'icon';
-      document.head.appendChild(link);
+    const r = document.documentElement;
+    const base = mode === 'light' ? { ...t, ...lightColors } : t;
+    const map = {
+      '--bg-primary': base.bgPrimary,
+      '--bg-secondary': base.bgSecondary,
+      '--bg-card': base.bgCard,
+      '--bg-card-hover': base.bgCardHover,
+      '--bg-input': base.bgInput,
+      '--border-color': base.borderColor,
+      '--border-hover': base.borderHover,
+      '--text-primary': base.textPrimary,
+      '--text-secondary': base.textSecondary,
+      '--text-muted': base.textMuted,
+      '--accent': base.accent,
+      '--accent-light': base.accentLight,
+      '--accent-glow': hexToRgba(base.accent, 0.3),
+      '--success': base.success,
+      '--warning': base.warning,
+      '--danger': base.danger,
+      '--info': base.info,
+      '--radius': `${base.borderRadius}px`,
+      '--radius-lg': `${base.borderRadius + 4}px`,
+      '--radius-xl': `${base.borderRadius + 12}px`,
+    };
+    for (const [key, val] of Object.entries(map)) {
+      if (val) r.style.setProperty(key, val);
     }
-    link.href = t.favicon;
-  }
-  if (t.customCss) {
-    let styleEl = document.getElementById('custom-theme-css');
-    if (!styleEl) {
-      styleEl = document.createElement('style');
-      styleEl.id = 'custom-theme-css';
-      document.head.appendChild(styleEl);
+    if (base.bgImage) {
+      document.body.style.backgroundImage = `url(${base.bgImage})`;
+      document.body.style.backgroundRepeat = base.bgRepeat || 'repeat';
+      document.body.style.backgroundSize = base.bgSize || 'auto';
+      document.body.style.backgroundAttachment = 'fixed';
+      document.body.style.backgroundPosition = 'center';
+    } else {
+      document.body.style.backgroundImage = '';
+      document.body.style.backgroundRepeat = '';
+      document.body.style.backgroundSize = '';
     }
-    styleEl.textContent = t.customCss;
-  }
+    if (base.favicon) {
+      let link = document.querySelector('link[rel="icon"]');
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
+      }
+      link.href = base.favicon;
+    }
+    if (base.customCss) {
+      let styleEl = document.getElementById('custom-theme-css');
+      if (!styleEl) {
+        styleEl = document.createElement('style');
+        styleEl.id = 'custom-theme-css';
+        document.head.appendChild(styleEl);
+      }
+      styleEl.textContent = base.customCss;
+    }
   } catch (e) { /* silent */ }
 }

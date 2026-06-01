@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { FiSearch, FiFilter, FiGrid, FiList } from 'react-icons/fi';
 import axios from 'axios';
+import { useLanguage } from '../context/LanguageContext';
 import ProductCard from '../components/ProductCard';
 
 const API = process.env.REACT_APP_API_URL || '/api';
 
 export default function Shop() {
+  const { t } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [total, setTotal] = useState(0);
@@ -45,18 +47,18 @@ export default function Shop() {
 
   const categories = ['', 'maps', 'mlo', 'interior', 'exterior', 'build', 'other'];
   const sortOptions = [
-    { value: 'newest', label: 'Newest' },
-    { value: 'price_asc', label: 'Price: Low to High' },
-    { value: 'price_desc', label: 'Price: High to Low' },
-    { value: 'sales', label: 'Best Selling' },
-    { value: 'rating', label: 'Highest Rated' },
+    { value: 'newest', label: t('shop.sort.newest') },
+    { value: 'price_asc', label: t('shop.sort.priceAsc') },
+    { value: 'price_desc', label: t('shop.sort.priceDesc') },
+    { value: 'sales', label: t('shop.sort.bestSelling') },
+    { value: 'rating', label: t('shop.sort.highestRated') },
   ];
 
   return (
     <div className="shop-page">
       <div className="page-header">
-        <h1>Shop {category && <span className="gradient-text">/ {category}</span>}</h1>
-        <p>{total} products available</p>
+        <h1>{t('shop.title')} {category && <span className="gradient-text">/ {category}</span>}</h1>
+        <p>{total} {t('shop.productsAvailable')}</p>
       </div>
 
       <div className="shop-toolbar">
@@ -64,14 +66,14 @@ export default function Shop() {
           <FiSearch />
           <input
             type="text"
-            placeholder="Search products..."
+            placeholder={t('shop.search')}
             value={search}
             onChange={(e) => updateParams('search', e.target.value)}
           />
         </div>
         <div className="toolbar-filters">
           <select value={category} onChange={(e) => updateParams('category', e.target.value)}>
-            <option value="">All Categories</option>
+            <option value="">{t('shop.allCategories')}</option>
             {categories.filter(Boolean).map(c => (
               <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>
             ))}
@@ -96,8 +98,8 @@ export default function Shop() {
         <div className="loading-screen"><div className="loader"></div></div>
       ) : products.length === 0 ? (
         <div className="empty-state">
-          <h2>No products found</h2>
-          <p>Try adjusting your search or filter criteria</p>
+          <h2>{t('shop.empty.title')}</h2>
+          <p>{t('shop.empty.subtitle')}</p>
         </div>
       ) : (
         <>

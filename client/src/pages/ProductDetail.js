@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { FiShoppingCart, FiCheck, FiDownload, FiStar, FiShield, FiClock, FiArrowLeft } from 'react-icons/fi';
 import axios from 'axios';
 import { useCart } from '../context/CartContext';
+import { useLanguage } from '../context/LanguageContext';
 import toast from 'react-hot-toast';
 import ProductCard from '../components/ProductCard';
 
@@ -11,6 +12,7 @@ const API = process.env.REACT_APP_API_URL || '/api';
 export default function ProductDetail() {
   const { slug } = useParams();
   const { addItem } = useCart();
+  const { t } = useLanguage();
   const [product, setProduct] = useState(null);
   const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -30,7 +32,7 @@ export default function ProductDetail() {
   }, [slug]);
 
   if (loading) return <div className="loading-screen"><div className="loader"></div></div>;
-  if (!product) return <div className="empty-state"><h2>Product not found</h2><Link to="/shop">Back to Shop</Link></div>;
+  if (!product) return <div className="empty-state"><h2>{t('product.notFound')}</h2><Link to="/shop">{t('product.backToShop')}</Link></div>;
 
   const price = product.salePrice || product.price;
   const hasDiscount = product.salePrice && product.salePrice < product.price;
@@ -41,12 +43,12 @@ export default function ProductDetail() {
 
   const handleAddToCart = () => {
     addItem(product);
-    toast.success(`${product.name} added to cart!`);
+    toast.success(`${product.name} ${t('product.addedToCart')}`);
   };
 
   return (
     <div className="product-detail">
-      <Link to="/shop" className="back-link"><FiArrowLeft /> Back to Shop</Link>
+      <Link to="/shop" className="back-link"><FiArrowLeft /> {t('product.backToShop')}</Link>
 
       <div className="product-detail-grid">
         <div className="product-gallery">
@@ -72,7 +74,7 @@ export default function ProductDetail() {
             {product.rating > 0 && (
               <span className="rating"><FiStar /> {product.rating}</span>
             )}
-            <span className="sales-count"><FiDownload /> {product.salesCount} sold</span>
+            <span className="sales-count"><FiDownload /> {product.salesCount} {t('product.sold')}</span>
             <span className="version">v{product.version}</span>
           </div>
           <div className="product-price-section">
@@ -89,7 +91,7 @@ export default function ProductDetail() {
 
           {product.features?.length > 0 && (
             <div className="product-features">
-              <h3>Features</h3>
+              <h3>{t('product.features')}</h3>
               <ul>
                 {product.features.map((f, i) => (
                   <li key={i}><FiCheck /> {f}</li>
@@ -100,7 +102,7 @@ export default function ProductDetail() {
 
           {product.requirements?.length > 0 && (
             <div className="product-requirements">
-              <h3>Requirements</h3>
+              <h3>{t('product.requirements')}</h3>
               <ul>
                 {product.requirements.map((r, i) => (
                   <li key={i}>{r}</li>
@@ -110,25 +112,25 @@ export default function ProductDetail() {
           )}
 
           <div className="product-meta-info">
-            {product.fileSize && <span><FiDownload /> File Size: {product.fileSize}</span>}
-            <span><FiClock /> Updated: {new Date(product.updatedAt).toLocaleDateString()}</span>
+            {product.fileSize && <span><FiDownload /> {t('product.fileSize')}: {product.fileSize}</span>}
+            <span><FiClock /> {t('product.updated')}: {new Date(product.updatedAt).toLocaleDateString()}</span>
           </div>
 
           <div className="product-actions">
             <button className="btn-primary btn-large" onClick={handleAddToCart} disabled={!product.inStock}>
-              <FiShoppingCart /> {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+              <FiShoppingCart /> {product.inStock ? t('product.addToCart') : t('product.outOfStock')}
             </button>
           </div>
 
           <div className="product-guarantee">
-            <FiShield /> Secure checkout with Stripe & PayPal. Instant delivery after payment.
+            <FiShield /> {t('product.secureCheckout')}
           </div>
         </div>
       </div>
 
       {related.length > 0 && (
         <section className="related-section">
-          <h2>Related Products</h2>
+          <h2>{t('product.related')}</h2>
           <div className="products-grid">
             {related.map(p => <ProductCard key={p._id} product={p} />)}
           </div>

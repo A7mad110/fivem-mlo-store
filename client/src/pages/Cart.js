@@ -2,17 +2,19 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FiTrash2, FiShoppingCart, FiArrowLeft, FiPlus, FiMinus } from 'react-icons/fi';
 import { useCart } from '../context/CartContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Cart() {
   const { items, removeItem, updateQuantity, totalPrice, totalItems } = useCart();
+  const { t } = useLanguage();
 
   if (items.length === 0) {
     return (
       <div className="empty-cart">
         <div className="empty-cart-icon"><FiShoppingCart size={64} /></div>
-        <h2>Your cart is empty</h2>
-        <p>Browse our collection and add some MLOs to your cart!</p>
-        <Link to="/shop" className="btn-primary">Browse Products</Link>
+        <h2>{t('cart.empty')}</h2>
+        <p>{t('cart.emptyDesc')}</p>
+        <Link to="/shop" className="btn-primary">{t('cart.browseProducts')}</Link>
       </div>
     );
   }
@@ -20,8 +22,8 @@ export default function Cart() {
   return (
     <div className="cart-page">
       <div className="page-header">
-        <h1>Shopping Cart</h1>
-        <p>{totalItems} item{totalItems !== 1 ? 's' : ''}</p>
+        <h1>{t('cart.title')}</h1>
+        <p>{totalItems} {totalItems === 1 ? t('cart.item') : t('cart.items')}</p>
       </div>
 
       <div className="cart-content">
@@ -49,22 +51,22 @@ export default function Cart() {
         </div>
 
         <div className="cart-summary">
-          <h3>Order Summary</h3>
+          <h3>{t('cart.orderSummary')}</h3>
           <div className="summary-row">
-            <span>Subtotal ({totalItems} items)</span>
+            <span>{t('cart.subtotal')} ({totalItems} {totalItems === 1 ? t('cart.item') : t('cart.items')})</span>
             <span>${totalPrice.toFixed(2)}</span>
           </div>
           <div className="summary-row">
-            <span>Tax</span>
-            <span>Calculated at checkout</span>
+            <span>{t('cart.tax')}</span>
+            <span>{t('cart.calculatedAtCheckout')}</span>
           </div>
           <div className="summary-divider"></div>
           <div className="summary-total">
-            <span>Total</span>
+            <span>{t('cart.total')}</span>
             <span>${totalPrice.toFixed(2)}</span>
           </div>
-          <Link to="/checkout" className="btn-primary btn-full">Proceed to Checkout</Link>
-          <Link to="/shop" className="btn-secondary btn-full"><FiArrowLeft /> Continue Shopping</Link>
+          <Link to="/checkout" className="btn-primary btn-full">{t('cart.checkout')}</Link>
+          <Link to="/shop" className="btn-secondary btn-full"><FiArrowLeft /> {t('cart.continueShopping')}</Link>
         </div>
       </div>
     </div>

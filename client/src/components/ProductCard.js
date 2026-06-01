@@ -2,16 +2,18 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FiShoppingCart, FiStar, FiDownload } from 'react-icons/fi';
 import { useCart } from '../context/CartContext';
+import { useLanguage } from '../context/LanguageContext';
 import toast from 'react-hot-toast';
 
 export default function ProductCard({ product }) {
   const { addItem } = useCart();
+  const { t } = useLanguage();
 
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
     addItem(product);
-    toast.success(`${product.name} added to cart!`);
+    toast.success(`${product.name} ${t('product.addedToCart')}`);
   };
 
   const price = product.salePrice || product.price || 0;
@@ -33,7 +35,7 @@ export default function ProductCard({ product }) {
         )}
         <div className="product-card-overlay">
           <button className="quick-add-btn" onClick={handleAddToCart}>
-            <FiShoppingCart /> Add to Cart
+            <FiShoppingCart /> {t('product.addToCart')}
           </button>
         </div>
       </div>

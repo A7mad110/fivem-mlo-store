@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import { ThemeProvider } from './context/ThemeContext';
+import { useLanguage } from './context/LanguageContext';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
 import ProductDetail from './pages/ProductDetail';
@@ -18,12 +19,28 @@ import DiscordSuccess from './pages/DiscordSuccess';
 import NotFound from './pages/NotFound';
 import Setup from './pages/Setup';
 
-function SimplePage({ title, children }) {
+function SimplePage({ titleKey, textKey }) {
+  const { t } = useLanguage();
   return (
     <div className="page-header" style={{ textAlign: 'center', paddingTop: '80px' }}>
-      <h1>{title}</h1>
-      <p style={{ color: 'var(--text-secondary)', marginTop: '16px', maxWidth: '600px', margin: '16px auto' }}>{children}</p>
-      <Link to="/" className="btn-primary" style={{ marginTop: '24px', display: 'inline-flex' }}>Go Home</Link>
+      <h1>{t(`simplePages.${titleKey}.title`)}</h1>
+      <p style={{ color: 'var(--text-secondary)', marginTop: '16px', maxWidth: '600px', margin: '16px auto' }}>
+        {t(`simplePages.${titleKey}.text`)}
+      </p>
+      <Link to="/" className="btn-primary" style={{ marginTop: '24px', display: 'inline-flex' }}>{t('notFound.goHome')}</Link>
+    </div>
+  );
+}
+
+function TermsPage() {
+  const { lang, t } = useLanguage();
+  return (
+    <div className="page-header" style={{ textAlign: 'center', paddingTop: '80px' }}>
+      <h1>{t('simplePages.terms.title')}</h1>
+      <p style={{ color: 'var(--text-secondary)', marginTop: '16px', maxWidth: '600px', margin: '16px auto' }}>
+        {lang === 'ar' ? t('simplePages.terms.arabicText') : t('simplePages.terms.text')}
+      </p>
+      <Link to="/" className="btn-primary" style={{ marginTop: '24px', display: 'inline-flex' }}>{t('notFound.goHome')}</Link>
     </div>
   );
 }
@@ -48,10 +65,10 @@ export default function App() {
           <Route path="/dashboard/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
           <Route path="/setup" element={<ProtectedRoute><Setup /></ProtectedRoute>} />
-          <Route path="/contact" element={<SimplePage title="Contact Us">Get in touch with our support team. We typically respond within 24 hours. Email: support@mlostore.com</SimplePage>} />
-          <Route path="/faq" element={<SimplePage title="FAQ">Find answers to common questions about our products, delivery, and support.</SimplePage>} />
-          <Route path="/terms" element={<SimplePage title="Terms of Service">By purchasing from 𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤, you agree to our terms. All digital products are non-refundable after download. • بالشراء من 𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤، أنت توافق على شروطنا. جميع المنتجات الرقمية غير قابلة للاسترداد بعد التحميل.</SimplePage>} />
-          <Route path="/refund" element={<SimplePage title="Refund Policy">We offer a 14-day refund policy for unused products. Contact support for assistance.</SimplePage>} />
+          <Route path="/contact" element={<SimplePage titleKey="contact" />} />
+          <Route path="/faq" element={<SimplePage titleKey="faq" />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/refund" element={<SimplePage titleKey="refund" />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

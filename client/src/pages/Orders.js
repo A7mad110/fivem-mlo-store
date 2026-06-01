@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FiPackage, FiDownload, FiCheck, FiClock, FiX } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Orders() {
   const { api } = useAuth();
+  const { t } = useLanguage();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -24,21 +26,30 @@ export default function Orders() {
     }
   };
 
+  const statusText = (status) => {
+    switch (status) {
+      case 'completed': return t('orders.status.completed');
+      case 'pending': return t('orders.status.pending');
+      case 'failed': return t('orders.status.failed');
+      default: return status;
+    }
+  };
+
   if (loading) return <div className="loading-screen"><div className="loader"></div></div>;
 
   return (
     <div className="orders-page">
       <div className="page-header">
-        <h1>My Orders</h1>
-        <p>{orders.length} order{orders.length !== 1 ? 's' : ''}</p>
+        <h1>{t('orders.title')}</h1>
+        <p>{orders.length} {orders.length === 1 ? t('orders.order') : t('orders.orders')}</p>
       </div>
 
       {orders.length === 0 ? (
         <div className="empty-state">
           <FiPackage size={48} />
-          <h2>No orders yet</h2>
-          <p>Start by browsing our collection!</p>
-          <Link to="/shop" className="btn-primary">Browse Products</Link>
+          <h2>{t('orders.empty')}</h2>
+          <p>{t('orders.emptyDesc')}</p>
+          <Link to="/shop" className="btn-primary">{t('orders.browseProducts')}</Link>
         </div>
       ) : (
         <div className="orders-list">
@@ -48,7 +59,7 @@ export default function Orders() {
                 <div className="order-id">
                   <span className="order-number">#{order._id.toString().slice(-8).toUpperCase()}</span>
                   <span className={`order-status ${order.status}`}>
-                    {statusIcon(order.status)} {order.status}
+                    {statusIcon(order.status)} {statusText(order.status)}
                   </span>
                 </div>
                 <span className="order-date">{new Date(order.createdAt).toLocaleDateString()}</span>
@@ -63,8 +74,8 @@ export default function Orders() {
                 ))}
               </div>
               <div className="order-footer">
-                <span className="order-total">Total: ${order.totalAmount.toFixed(2)}</span>
-                <span className="order-payment">Paid via {order.paymentMethod}</span>
+                <span className="order-total">{t('orders.total')}: ${order.totalAmount.toFixed(2)}</span>
+                <span className="order-payment">{t('orders.paidVia')} {order.paymentMethod}</span>
               </div>
             </div>
           ))}
