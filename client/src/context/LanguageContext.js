@@ -31,7 +31,7 @@ export function LanguageProvider({ children }) {
 
   const t = useCallback((path, fallback = '') => {
     const val = getNested(translations[lang], path);
-    return val ?? fallback || path;
+    return val ?? (fallback || path);
   }, [lang]);
 
   return (
