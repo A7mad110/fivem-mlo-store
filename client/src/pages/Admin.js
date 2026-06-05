@@ -69,7 +69,7 @@ function ProductRow({ product, onEdit, onDelete, t }) {
   );
 }
 
-function UserRow({ user: u, t }) {
+function UserRow({ user: u, t, onDelete }) {
   return (
     <div className="glass-card rounded-2xl p-4 flex flex-col md:flex-row gap-3 items-start md:items-center justify-between">
       <div className="flex items-center gap-3">
@@ -80,7 +80,7 @@ function UserRow({ user: u, t }) {
         />
         <div>
           <div className="font-semibold text-sm text-on-surface">{u.username}</div>
-          <div className="text-text-muted text-xs">{u.email || ''} <span className="text-primary">🆔 {u._id}</span></div>
+          <div className="text-text-muted text-xs">{u.email || ''} <span className="text-primary">{t('admin.user.id')} {u._id}</span></div>
         </div>
       </div>
       <div className="flex items-center gap-3 text-xs">
@@ -89,6 +89,9 @@ function UserRow({ user: u, t }) {
         <span className={u.verified ? 'text-accent-electric' : 'text-error'}>
           {u.verified ? t('admin.verified') : t('admin.unverified')}
         </span>
+        <button onClick={() => onDelete(u._id)} className="p-1.5 text-text-muted hover:text-error transition-colors" title={t('admin.user.delete')}>
+          <FiTrash2 size={14} />
+        </button>
       </div>
     </div>
   );
@@ -262,6 +265,18 @@ export default function Admin() {
     }
   };
 
+  const deleteUser = async (id) => {
+    if (!window.confirm(t('admin.user.deleteConfirm'))) return;
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`/api/admin/users/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      toast.success(t('admin.user.deleted'));
+      fetchData();
+    } catch {
+      toast.error(t('admin.error'));
+    }
+  };
+
   const deleteCoupon = async (id) => {
     if (!window.confirm(t('admin.confirmDelete'))) return;
     try {
@@ -375,7 +390,7 @@ export default function Admin() {
             {data.users.length === 0 ? (
               <div className="text-center py-12 text-text-muted">{t('admin.noUsers')}</div>
             ) : (
-              data.users.map(u => <UserRow key={u._id} user={u} t={t} />)
+              data.users.map(u => <UserRow key={u._id} user={u} t={t} onDelete={deleteUser} />)
             )}
           </div>
         ) : tab === 'coupons' ? (
