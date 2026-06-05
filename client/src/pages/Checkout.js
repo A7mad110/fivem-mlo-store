@@ -20,7 +20,7 @@ export default function Checkout() {
   const handleApplyCoupon = async () => {
     if (!coupon) return;
     try {
-      const res = await axios.post('/api/coupons/validate', { code: coupon });
+      const res = await axios.post('/api/coupons/validate', { code: coupon, totalAmount: totalPrice });
       setCouponDiscount(res.data.discount || 0);
       setCouponMsg(t('checkout.couponSuccess'));
     } catch {
