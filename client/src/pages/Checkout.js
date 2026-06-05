@@ -33,8 +33,8 @@ export default function Checkout() {
   const handleCheckout = async () => {
     setLoading(true);
     try {
-      const { data } = await api.post('/orders/create', {
-        items: cart.map(i => ({ product: i.productId, quantity: i.quantity })),
+      const { data } = await api.post('/orders', {
+        items: cart.map(i => ({ productId: i.productId, quantity: i.quantity })),
         coupon: coupon || undefined,
       });
       if (data.url) {
