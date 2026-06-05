@@ -1,18 +1,45 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiPackage, FiShoppingCart, FiUser, FiMail, FiCalendar, FiShield, FiCheckCircle, FiXCircle, FiClock, FiArrowRight } from 'react-icons/fi';
+import { FiPackage, FiShoppingCart, FiUser, FiMail, FiCalendar, FiShield, FiCheckCircle, FiXCircle, FiClock, FiArrowRight, FiSend } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import toast from 'react-hot-toast';
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, verifyEmail, resendVerification } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const [showVerify, setShowVerify] = useState(false);
+  const [code, setCode] = useState('');
+  const [verifying, setVerifying] = useState(false);
 
   if (!user) {
     navigate('/login');
     return null;
   }
+
+  const handleVerify = async () => {
+    if (!code) return;
+    setVerifying(true);
+    try {
+      await verifyEmail(code);
+      toast.success(t('dashboard.emailVerified'));
+      setShowVerify(false);
+      setCode('');
+    } catch {
+      toast.error(t('dashboard.verificationFailed'));
+    }
+    setVerifying(false);
+  };
+
+  const handleResend = async () => {
+    try {
+      await resendVerification();
+      toast.success(t('dashboard.codeResent'));
+    } catch {
+      toast.error(t('dashboard.resendFailed'));
+    }
+  };
 
   const stats = [
     { icon: FiPackage, value: user.purchases?.length || 0, label: t('dashboard.totalPurchases') },
@@ -26,10 +53,29 @@ export default function Dashboard() {
       {/* Verify banner */}
       {!user.verified && (
         <div className="bg-error-container/20 border-b border-error/20 px-margin-edge py-3">
-          <div className="max-w-container-max mx-auto flex items-center justify-between">
+          <div className="max-w-container-max mx-auto flex items-center justify-between flex-wrap gap-2">
             <span className="text-sm text-error">{t('dashboard.verifyBanner')}</span>
-            <Link to="/dashboard" className="text-sm text-error hover:underline font-semibold">{t('dashboard.verifyNow')}</Link>
+            <button onClick={() => setShowVerify(!showVerify)} className="text-sm text-error hover:underline font-semibold">{t('dashboard.verifyNow')}</button>
           </div>
+          {showVerify && (
+            <div className="max-w-container-max mx-auto mt-3 flex items-center gap-3">
+              <input
+                type="text"
+                value={code}
+                onChange={e => setCode(e.target.value)}
+                placeholder={t('dashboard.codePlaceholder')}
+                className="form-input max-w-[200px] text-center tracking-widest"
+                maxLength={6}
+              />
+              <button onClick={handleVerify} disabled={verifying || !code} className="btn-primary-custom text-sm py-2 px-4 disabled:opacity-50">
+                {verifying ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : t('dashboard.verify')}
+              </button>
+              <button onClick={handleResend} className="btn-secondary-custom text-sm py-2 px-4">
+                <FiSend size={14} /> {t('dashboard.resend')}
+              </button>
+              <button onClick={() => { setShowVerify(false); setCode(''); }} className="text-text-muted hover:text-on-surface text-sm">{t('dashboard.cancel')}</button>
+            </div>
+          )}
         </div>
       )}
 

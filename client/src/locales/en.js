@@ -254,6 +254,7 @@ const en = {
     admin: 'Admin',
     user: 'User',
     status: 'Status',
+    verified: 'Verified',
     unverified: 'Unverified',
     title: 'Dashboard',
     welcome: 'Welcome back,',

@@ -254,6 +254,7 @@ const ar = {
     admin: 'مدير',
     user: 'مستخدم',
     status: 'الحالة',
+    verified: 'موثق',
     unverified: 'غير موثق',
     title: 'لوحة المعلومات',
     welcome: 'مرحبًا بعودتك،',
