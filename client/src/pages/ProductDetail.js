@@ -12,6 +12,7 @@ export default function ProductDetail() {
   const { t } = useLanguage();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(0);
 
   useEffect(() => {
     axios.get(`/api/products/${slug}`)
@@ -61,8 +62,8 @@ export default function ProductDetail() {
           {/* Image */}
           <div className="lg:w-1/2">
             <div className="glass-card rounded-3xl overflow-hidden aspect-[4/3] bg-surface-container-high">
-              {product.images?.[0] ? (
-                <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+              {product.images?.[selectedImage] ? (
+                <img src={product.images[selectedImage]} alt={product.name} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-text-muted">
                   <FiTrendingUp size={64} />
@@ -72,7 +73,7 @@ export default function ProductDetail() {
             {product.images?.length > 1 && (
               <div className="flex gap-3 mt-4 overflow-x-auto pb-2">
                 {product.images.map((img, i) => (
-                  <div key={i} className="w-20 h-20 rounded-xl overflow-hidden bg-surface-container-high shrink-0 border border-outline-variant/20 hover:border-primary transition-colors cursor-pointer">
+                  <div key={i} onClick={() => setSelectedImage(i)} className={`w-20 h-20 rounded-xl overflow-hidden bg-surface-container-high shrink-0 border-2 transition-colors cursor-pointer ${i === selectedImage ? 'border-primary' : 'border-outline-variant/20 hover:border-primary'}`}>
                     <img src={img} alt="" className="w-full h-full object-cover" />
                   </div>
                 ))}
