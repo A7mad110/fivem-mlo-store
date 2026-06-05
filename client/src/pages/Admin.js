@@ -128,10 +128,10 @@ export default function Admin() {
         axios.get('/api/admin/coupons', { headers }),
       ]);
       setData({
-        products: prodRes.data?.products || prodRes.data || [],
-        orders: ordRes.data?.orders || ordRes.data || [],
-        users: userRes.data?.users || userRes.data || [],
-        coupons: coupRes.data?.coupons || coupRes.data || [],
+        products: prodRes.data?.products || [],
+        orders: ordRes.data?.orders || [],
+        users: userRes.data?.users || [],
+        coupons: coupRes.data?.coupons || [],
       });
     } catch (err) {
       console.error('Admin fetch error:', err);

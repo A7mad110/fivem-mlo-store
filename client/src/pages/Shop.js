@@ -25,7 +25,7 @@ export default function Shop() {
         if (sort) params.sort = sort;
         if (category) params.category = category;
         const res = await axios.get('/api/products', { params });
-        setProducts(res.data?.products || res.data || []);
+        setProducts(res.data?.products || []);
       } catch (err) {
         console.error('Shop fetch error:', err);
       } finally {
@@ -37,7 +37,7 @@ export default function Shop() {
 
   useEffect(() => {
     axios.get('/api/categories')
-      .then(res => setCategories(res.data?.categories || res.data || []))
+      .then(res => setCategories(res.data?.categories || []))
       .catch(() => {});
   }, []);
 

@@ -26,7 +26,7 @@ export default function Orders() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     axios.get('/api/orders', { headers: { Authorization: `Bearer ${token}` } })
-      .then(res => setOrders(res.data.orders || res.data || []))
+      .then(res => setOrders(res.data.orders || []))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
