@@ -641,7 +641,7 @@ function CouponModal({ coupon, onClose, onSave, api, t }) {
     value: coupon?.value || '',
     minAmount: coupon?.minAmount || 0,
     maxUses: coupon?.maxUses || 0,
-    expiresAt: coupon?.expiresAt ? new Date(coupon.expiresAt).toISOString().split('T')[0] : '',
+    expiresAt: coupon?.expiresAt ? new Date(coupon.expiresAt).toLocaleDateString('en-CA') : '',
     categories: coupon?.categories?.join(', ') || '',
   });
   const [loading, setLoading] = useState(false);
