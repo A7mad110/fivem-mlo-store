@@ -254,6 +254,7 @@ const en = {
     admin: 'Admin',
     user: 'User',
     status: 'Status',
+    unverified: 'Unverified',
     title: 'Dashboard',
     welcome: 'Welcome back,',
     verifyBanner: 'Please verify your email address to access all features.',

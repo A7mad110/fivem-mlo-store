@@ -2,7 +2,7 @@ const config = require('../config');
 const Setting = require('../models/Setting');
 
 let sendgrid = null;
-let fromEmail = 'noreply@mlostore.com';
+let fromEmail = config.email.from || config.email.user || 'noreply@mlostore.com';
 
 const init = async () => {
   if (sendgrid) return sendgrid;
@@ -31,8 +31,9 @@ const sendVerificationEmail = async (to, code) => {
   const sg = await init();
   if (!sg) throw new Error('Email not configured');
   await sg.send({
-    to, from: fromEmail,
+    to, from: { email: fromEmail, name: '𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤' },
     subject: 'Verify your email - 𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤',
+    headers: { 'List-Unsubscribe': `<mailto:support@${fromEmail.split('@')[1] || 'mlostore.com'}>` },
     html: `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0f0f1a; color: #e0e0e0; border-radius: 16px; overflow: hidden;">
       <div style="background: linear-gradient(135deg, #6c5ce7, #a29bfe); padding: 40px; text-align: center;">

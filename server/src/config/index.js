@@ -14,6 +14,7 @@ module.exports = {
     port: parseInt(process.env.EMAIL_PORT),
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
+    from: process.env.EMAIL_FROM,
   },
   stripe: {
     secretKey: process.env.STRIPE_SECRET_KEY,
