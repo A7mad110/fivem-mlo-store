@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { FiCreditCard, FiUser, FiCheckCircle, FiShoppingCart, FiArrowLeft } from 'react-icons/fi';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -8,7 +8,7 @@ import axios from 'axios';
 
 export default function Checkout() {
   const { t } = useLanguage();
-  const { cart, totalPrice, clearCart } = useCart();
+  const { items: cart, totalPrice, clearCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [coupon, setCoupon] = useState('');
@@ -35,7 +35,7 @@ export default function Checkout() {
     setLoading(true);
     try {
       const { data } = await axios.post('/api/orders/create', {
-        items: cart.map(i => ({ product: i._id, quantity: i.quantity })),
+        items: cart.map(i => ({ product: i.productId, quantity: i.quantity })),
         coupon: coupon || undefined,
       });
       if (data.url) {
@@ -142,7 +142,7 @@ export default function Checkout() {
               <h3 className="font-label-caps text-label-caps text-on-surface mb-4">{t('checkout.summary')}</h3>
               <div className="space-y-3 max-h-60 overflow-y-auto mb-4">
                 {cart.map(item => (
-                  <div key={item._id} className="flex justify-between text-sm">
+                  <div key={item.productId} className="flex justify-between text-sm">
                     <span className="text-text-muted truncate">{item.name} × {item.quantity}</span>
                     <span className="text-on-surface shrink-0">${(item.price * item.quantity).toFixed(2)}</span>
                   </div>

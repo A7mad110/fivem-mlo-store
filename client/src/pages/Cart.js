@@ -5,7 +5,7 @@ import { useCart } from '../context/CartContext';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function Cart() {
-  const { cart, removeFromCart, updateQuantity, totalPrice, totalItems } = useCart();
+  const { items: cart, removeItem: removeFromCart, updateQuantity, totalPrice, totalItems } = useCart();
   const { t } = useLanguage();
 
   if (cart.length === 0) {
@@ -33,8 +33,8 @@ export default function Cart() {
         <div className="flex flex-col lg:flex-row gap-gutter">
           {/* Cart items */}
           <div className="flex-1 space-y-4">
-            {cart.map(item => (
-              <div key={item._id} className="glass-card rounded-2xl p-4 flex gap-4">
+              {cart.map(item => (
+                  <div key={item.productId} className="glass-card rounded-2xl p-4 flex gap-4">
                 <div className="w-24 h-24 rounded-xl bg-surface-container-high shrink-0 overflow-hidden">
                   {item.images?.[0] ? (
                     <img src={item.images[0]} alt={item.name} className="w-full h-full object-cover" />
@@ -43,23 +43,23 @@ export default function Cart() {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <Link to={`/product/${item._id}`} className="font-headline-sm text-headline-sm text-on-surface hover:text-primary transition-colors block truncate">
+                  <Link to={`/shop/${item.slug || item._id}`} className="font-headline-sm text-headline-sm text-on-surface hover:text-primary transition-colors block truncate">
                     {item.name}
                   </Link>
                   <p className="text-text-muted text-xs mt-0.5 capitalize">{item.category}</p>
                   <div className="flex items-center justify-between mt-3">
                     <div className="flex items-center gap-3">
-                      <button onClick={() => updateQuantity(item._id, Math.max(1, item.quantity - 1))} className="p-1.5 rounded-lg border border-outline-variant/30 text-text-muted hover:text-on-surface hover:border-text-muted transition-colors">
+                      <button onClick={() => updateQuantity(item.productId, Math.max(1, item.quantity - 1))} className="p-1.5 rounded-lg border border-outline-variant/30 text-text-muted hover:text-on-surface hover:border-text-muted transition-colors">
                         <FiMinus size={14} />
                       </button>
                       <span className="font-label-caps text-label-caps text-on-surface min-w-[20px] text-center">{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item._id, item.quantity + 1)} className="p-1.5 rounded-lg border border-outline-variant/30 text-text-muted hover:text-on-surface hover:border-text-muted transition-colors">
+                      <button onClick={() => updateQuantity(item.productId, item.quantity + 1)} className="p-1.5 rounded-lg border border-outline-variant/30 text-text-muted hover:text-on-surface hover:border-text-muted transition-colors">
                         <FiPlus size={14} />
                       </button>
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="font-price-tag text-price-tag text-primary">${(item.price * item.quantity).toFixed(2)}</span>
-                      <button onClick={() => removeFromCart(item._id)} className="p-2 text-text-muted hover:text-error transition-colors">
+                      <button onClick={() => removeFromCart(item.productId)} className="p-2 text-text-muted hover:text-error transition-colors">
                         <FiTrash2 size={16} />
                       </button>
                     </div>

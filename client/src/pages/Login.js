@@ -9,7 +9,7 @@ const API = process.env.REACT_APP_API_URL || '';
 
 export default function Login() {
   const { t } = useLanguage();
-  const { login, error } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
