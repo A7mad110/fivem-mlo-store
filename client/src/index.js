@@ -16,14 +16,16 @@ root.render(
         <CartProvider>
           <App />
           <Toaster
-            position="top-right"
+            position="top-center"
             toastOptions={{
               duration: 4000,
               style: {
-                background: 'var(--bg-card)',
-                color: 'var(--text-primary)',
-                borderRadius: 'var(--radius)',
-                border: '1px solid var(--border-color)',
+                background: '#1e2023',
+                color: '#e2e2e7',
+                borderRadius: '0.5rem',
+                border: '1px solid rgba(71, 69, 84, 0.3)',
+                fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+                backdropFilter: 'blur(12px)',
               },
             }}
           />

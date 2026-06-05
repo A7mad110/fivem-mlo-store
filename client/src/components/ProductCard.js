@@ -1,61 +1,90 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FiShoppingCart, FiStar, FiDownload } from 'react-icons/fi';
+import { FiShoppingCart, FiStar, FiTrendingUp } from 'react-icons/fi';
 import { useCart } from '../context/CartContext';
 import { useLanguage } from '../context/LanguageContext';
 import toast from 'react-hot-toast';
 
 export default function ProductCard({ product }) {
-  const { addItem } = useCart();
+  const { addToCart } = useCart();
   const { t } = useLanguage();
+  const cardRef = useRef(null);
 
-  const handleAddToCart = (e) => {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    if (cardRef.current) observer.observe(cardRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  const handleAdd = (e) => {
     e.preventDefault();
-    e.stopPropagation();
-    addItem(product);
-    toast.success(`${product.name} ${t('product.addedToCart')}`);
+    addToCart(product);
+    toast.success(t('shop.addedToCart'));
   };
 
-  const price = product.salePrice || product.price || 0;
-  const hasDiscount = product.salePrice && product.price && product.salePrice < product.price;
+  const isOnSale = product.oldPrice && product.oldPrice > product.price;
 
   return (
-    <Link to={`/shop/${product.slug}`} className="product-card">
-      <div className="product-card-image">
-        <img
-          src={product.thumbnail || product.images?.[0] || 'https://via.placeholder.com/400x300/1a1a2e/6c5ce7?text=MLO'}
-          alt={product.name}
-          loading="lazy"
-        />
-        {hasDiscount && (
-          <span className="product-badge sale">SALE</span>
+    <Link
+      to={`/product/${product._id}`}
+      ref={cardRef}
+      className="product-card glass-card rounded-2xl overflow-hidden flex flex-col group cursor-pointer"
+    >
+      <div className="relative overflow-hidden aspect-[4/3] bg-surface-container-high">
+        {product.images?.[0] ? (
+          <img
+            src={product.images[0]}
+            alt={product.name}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-text-muted">
+            <FiTrendingUp size={48} />
+          </div>
         )}
-        {product.featured && !hasDiscount && (
-          <span className="product-badge featured">FEATURED</span>
+        {isOnSale && (
+          <span className="absolute top-3 left-3 bg-error px-2 py-0.5 rounded-md text-xs font-bold text-white">
+            SALE
+          </span>
         )}
-        <div className="product-card-overlay">
-          <button className="quick-add-btn" onClick={handleAddToCart}>
-            <FiShoppingCart /> {t('product.addToCart')}
+        <div className="absolute inset-0 bg-gradient-to-t from-surface/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+          <button
+            onClick={handleAdd}
+            className="w-full bg-primary text-on-primary rounded-lg py-2.5 font-label-caps text-label-caps text-sm flex items-center justify-center gap-2 hover:brightness-110 transition-all"
+          >
+            <FiShoppingCart size={16} /> {t('shop.addToCart')}
           </button>
         </div>
       </div>
-      <div className="product-card-body">
-        <span className="product-category">{product.category}</span>
-        <h3 className="product-name">{product.name}</h3>
-        <p className="product-desc">{product.shortDescription || product.description?.slice(0, 80) + '...'}</p>
-        <div className="product-card-footer">
-          <div className="product-price">
-            {hasDiscount && <span className="old-price">${(product.price || 0).toFixed(2)}</span>}
-            <span className="current-price">${price.toFixed(2)}</span>
-          </div>
-          <div className="product-meta">
-            {product.salesCount > 0 && (
-              <span className="product-sales"><FiDownload size={12} /> {product.salesCount}</span>
-            )}
-            {product.rating > 0 && (
-              <span className="product-rating"><FiStar size={12} /> {product.rating}</span>
-            )}
-          </div>
+      <div className="p-4 flex-1 flex flex-col gap-2">
+        <span className="text-text-muted text-xs uppercase tracking-wider">{product.category}</span>
+        <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold leading-tight group-hover:text-primary transition-colors">
+          {product.name}
+        </h3>
+        <p className="text-text-muted text-sm line-clamp-2 flex-1">{product.description}</p>
+        <div className="flex items-center gap-1">
+          {[1, 2, 3, 4, 5].map(s => (
+            <FiStar key={s} size={14} className="text-accent-electric" fill={s <= 4 ? 'currentColor' : 'none'} />
+          ))}
+          <span className="text-text-muted text-xs mr-2">(4.0)</span>
+        </div>
+        <div className="flex items-center gap-2 mt-2">
+          <span className="font-price-tag text-price-tag text-primary">
+            ${product.price.toFixed(2)}
+          </span>
+          {isOnSale && (
+            <span className="text-text-muted text-sm line-through">
+              ${product.oldPrice.toFixed(2)}
+            </span>
+          )}
         </div>
       </div>
     </Link>

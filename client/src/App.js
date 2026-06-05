@@ -22,12 +22,12 @@ import Setup from './pages/Setup';
 function SimplePage({ titleKey, textKey }) {
   const { t } = useLanguage();
   return (
-    <div className="page-header" style={{ textAlign: 'center', paddingTop: '80px' }}>
-      <h1>{t(`simplePages.${titleKey}.title`)}</h1>
-      <p style={{ color: 'var(--text-secondary)', marginTop: '16px', maxWidth: '600px', margin: '16px auto' }}>
-        {t(`simplePages.${titleKey}.text`)}
-      </p>
-      <Link to="/" className="btn-primary" style={{ marginTop: '24px', display: 'inline-flex' }}>{t('notFound.goHome')}</Link>
+    <div className="main-content flex items-center justify-center px-margin-edge min-h-[60vh]">
+      <div className="text-center max-w-xl">
+        <h1 className="font-headline-md text-headline-md text-on-surface mb-4">{t(`simplePages.${titleKey}.title`)}</h1>
+        <p className="text-text-muted">{t(`simplePages.${titleKey}.text`)}</p>
+        <Link to="/" className="btn-primary-custom inline-flex items-center gap-2 mt-8">{t('notFound.home')}</Link>
+      </div>
     </div>
   );
 }
@@ -35,12 +35,12 @@ function SimplePage({ titleKey, textKey }) {
 function TermsPage() {
   const { lang, t } = useLanguage();
   return (
-    <div className="page-header" style={{ textAlign: 'center', paddingTop: '80px' }}>
-      <h1>{t('simplePages.terms.title')}</h1>
-      <p style={{ color: 'var(--text-secondary)', marginTop: '16px', maxWidth: '600px', margin: '16px auto' }}>
-        {lang === 'ar' ? t('simplePages.terms.arabicText') : t('simplePages.terms.text')}
-      </p>
-      <Link to="/" className="btn-primary" style={{ marginTop: '24px', display: 'inline-flex' }}>{t('notFound.goHome')}</Link>
+    <div className="main-content flex items-center justify-center px-margin-edge min-h-[60vh]">
+      <div className="text-center max-w-xl">
+        <h1 className="font-headline-md text-headline-md text-on-surface mb-4">{t('simplePages.terms.title')}</h1>
+        <p className="text-text-muted">{lang === 'ar' ? t('simplePages.terms.arabicText') : t('simplePages.terms.text')}</p>
+        <Link to="/" className="btn-primary-custom inline-flex items-center gap-2 mt-8">{t('notFound.home')}</Link>
+      </div>
     </div>
   );
 }
@@ -48,9 +48,9 @@ function TermsPage() {
 export default function App() {
   return (
     <ThemeProvider>
-    <div className="app">
+    <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="main-content">
+      <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/shop" element={<Shop />} />

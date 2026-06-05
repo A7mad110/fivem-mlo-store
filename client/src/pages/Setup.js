@@ -1,149 +1,86 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { FiShield, FiUser, FiMail, FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Setup() {
-  const { user, api, setUser } = useAuth();
-  const [verifying, setVerifying] = useState(false);
-  const [makingAdmin, setMakingAdmin] = useState(false);
-  const [message, setMessage] = useState(null);
-  const [emailForm, setEmailForm] = useState({ host: '', port: '587', user: 'alriyadh1city@gmail.com', pass: '' });
-  const [savingEmail, setSavingEmail] = useState(false);
-  const [testingEmail, setTestingEmail] = useState(false);
+  const { t } = useLanguage();
+  const navigate = useNavigate();
+  const [form, setForm] = useState({ username: '', email: '', password: '', confirmPassword: '' });
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleVerify = async () => {
-    setVerifying(true);
-    setMessage(null);
-    try {
-      const { data } = await api.post('/setup/verify-email');
-      if (data.user) setUser(data.user);
-      setMessage({ type: 'success', text: data.message });
-      toast.success(data.message);
-    } catch (err) {
-      const text = err.response?.data?.message || 'Failed';
-      setMessage({ type: 'error', text });
-      toast.error(text);
-    }
-    setVerifying(false);
-  };
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleMakeAdmin = async () => {
-    setMakingAdmin(true);
-    setMessage(null);
-    try {
-      const { data } = await api.post('/setup/first-admin');
-      if (data.user) setUser(data.user);
-      setMessage({ type: 'success', text: data.message + ' You can now access the admin panel.' });
-      toast.success(data.message);
-    } catch (err) {
-      const text = err.response?.data?.message || 'Failed';
-      setMessage({ type: 'error', text });
-      toast.error(text);
-    }
-    setMakingAdmin(false);
-  };
-
-  const handleSaveEmail = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSavingEmail(true);
-    setMessage(null);
+    setError('');
+    if (form.password !== form.confirmPassword) return setError(t('register.passwordsDoNotMatch'));
+    setLoading(true);
     try {
-      const { data } = await api.post('/setup/email-config', emailForm);
-      setMessage({ type: 'success', text: data.message });
-      toast.success(data.message);
+      await axios.post('/api/auth/setup', {
+        username: form.username,
+        email: form.email,
+        password: form.password,
+      });
+      navigate('/login');
     } catch (err) {
-      const text = err.response?.data?.message || 'Failed';
-      setMessage({ type: 'error', text });
-      toast.error(text);
+      setError(err.response?.data?.message || t('register.error'));
+    } finally {
+      setLoading(false);
     }
-    setSavingEmail(false);
-  };
-
-  const handleTestEmail = async () => {
-    setTestingEmail(true);
-    setMessage(null);
-    try {
-      const { data } = await api.post('/setup/test-email');
-      setMessage({ type: 'success', text: data.message });
-      toast.success(data.message);
-    } catch (err) {
-      const text = err.response?.data?.message || 'Failed';
-      setMessage({ type: 'error', text });
-      toast.error(text);
-    }
-    setTestingEmail(false);
   };
 
   return (
-    <div className="setup-page">
-      <div className="container" style={{ maxWidth: '500px', margin: '0 auto', padding: '40px 20px' }}>
-        <h1 style={{ fontSize: '24px', marginBottom: '8px' }}>⚙️ Setup</h1>
-        <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>
-          Use these buttons if you're having trouble with email verification or need to set up the first admin account.
-        </p>
-
-        {message && (
-          <div style={{
-            padding: '12px 16px', borderRadius: '8px', marginBottom: '16px', fontSize: '14px',
-            background: message.type === 'success' ? '#065f46' : '#7f1d1d',
-            color: '#fff', border: `1px solid ${message.type === 'success' ? '#059669' : '#dc2626'}`,
-          }}>
-            {message.text}
+    <div className="main-content min-h-screen flex items-center justify-center px-margin-edge py-20">
+      <div className="glass-card rounded-3xl p-8 md:p-12 w-full max-w-md">
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 rounded-2xl bg-primary-container/20 flex items-center justify-center mx-auto mb-4">
+            <FiShield size={28} className="text-primary" />
           </div>
-        )}
-
-        <div className="setup-card" style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '24px', marginBottom: '16px', border: '1px solid var(--border)' }}>
-          <h3>Verify Email</h3>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '14px', margin: '8px 0 16px' }}>
-            {user?.isVerified
-              ? '✓ Your email is already verified!'
-              : 'If the verification email didn\'t arrive, click here to verify your email directly.'}
-          </p>
-          {!user?.isVerified && (
-            <button className="btn-primary" onClick={handleVerify} disabled={verifying}>
-              {verifying ? 'Verifying...' : 'Verify My Email'}
-            </button>
-          )}
+          <h1 className="font-headline-md text-headline-md text-on-surface font-bold">{t('setup.title')}</h1>
+          <p className="text-text-muted mt-2">{t('setup.subtitle')}</p>
         </div>
 
-        <div className="setup-card" style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '24px', border: '1px solid var(--border)' }}>
-          <h3>Become Admin</h3>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '14px', margin: '8px 0 16px' }}>
-            {user?.role === 'admin'
-              ? '✓ You are already an admin! Log out and log back in to see the Admin link.'
-              : 'If no admin account exists yet, click here to make your account an admin.'}
-          </p>
-          {user?.role !== 'admin' && (
-            <button className="btn-primary" onClick={handleMakeAdmin} disabled={makingAdmin}>
-              {makingAdmin ? 'Processing...' : 'Make Me Admin'}
-            </button>
-          )}
-        </div>
-
-        {user?.role === 'admin' && (
-          <div className="setup-card" style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '24px', marginTop: '16px', border: '1px solid var(--border)' }}>
-            <h3>SendGrid Email Configuration</h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', margin: '8px 0 16px' }}>
-              Paste your SendGrid API Key and enter the verified sender email.
-            </p>
-            <form onSubmit={handleSaveEmail} className="modal-form">
-              <div className="form-group">
-                <label>Sender Email (verified in SendGrid)</label>
-                <input type="email" value={emailForm.user} onChange={e => setEmailForm({ ...emailForm, user: e.target.value })} placeholder="alriyadh1city@gmail.com" required />
-              </div>
-              <div className="form-group">
-                <label>SendGrid API Key</label>
-                <input type="password" value={emailForm.pass} onChange={e => setEmailForm({ ...emailForm, pass: e.target.value })} placeholder="SG.xxxxxxxxxxxxxxxx" required />
-              </div>
-              <button type="submit" className="btn-primary btn-full" disabled={savingEmail}>
-                {savingEmail ? 'Saving...' : 'Save Email Settings'}
-              </button>
-              <button type="button" className="btn-primary btn-full" style={{ marginTop: '8px', background: 'var(--accent-secondary)' }} onClick={handleTestEmail} disabled={testingEmail}>
-                {testingEmail ? 'Sending...' : 'Send Test Email'}
-              </button>
-            </form>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="font-label-caps text-label-caps text-text-muted text-xs mb-1.5 block">{t('register.username')}</label>
+            <div className="relative">
+              <FiUser size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+              <input type="text" name="username" value={form.username} onChange={handleChange} className="form-input pl-10" required />
+            </div>
           </div>
-        )}
+          <div>
+            <label className="font-label-caps text-label-caps text-text-muted text-xs mb-1.5 block">{t('register.email')}</label>
+            <div className="relative">
+              <FiMail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+              <input type="email" name="email" value={form.email} onChange={handleChange} className="form-input pl-10" required />
+            </div>
+          </div>
+          <div>
+            <label className="font-label-caps text-label-caps text-text-muted text-xs mb-1.5 block">{t('register.password')}</label>
+            <div className="relative">
+              <FiLock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+              <input type={showPassword ? 'text' : 'password'} name="password" value={form.password} onChange={handleChange} className="form-input pl-10 pr-10" required />
+              <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-on-surface">
+                {showPassword ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+              </button>
+            </div>
+          </div>
+          <div>
+            <label className="font-label-caps text-label-caps text-text-muted text-xs mb-1.5 block">{t('register.confirmPassword')}</label>
+            <div className="relative">
+              <FiLock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+              <input type={showPassword ? 'text' : 'password'} name="confirmPassword" value={form.confirmPassword} onChange={handleChange} className="form-input pl-10 pr-10" required />
+            </div>
+          </div>
+          {error && <div className="text-error text-sm bg-error-container/10 p-3 rounded-lg">{error}</div>}
+          <button type="submit" disabled={loading} className="btn-primary-custom w-full flex items-center justify-center py-3.5 disabled:opacity-50">
+            {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : t('setup.submit')}
+          </button>
+        </form>
       </div>
     </div>
   );

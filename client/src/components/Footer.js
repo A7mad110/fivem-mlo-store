@@ -1,57 +1,82 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FiMail, FiShoppingCart, FiShield, FiHeadphones } from 'react-icons/fi';
-import { FaInstagram, FaYoutube, FaTiktok, FaDiscord } from 'react-icons/fa';
+import { FiGithub, FiTwitter, FiMail } from 'react-icons/fi';
+import { FaDiscord } from 'react-icons/fa';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function Footer() {
   const { theme } = useTheme();
   const { t } = useLanguage();
+
+  const features = [
+    { icon: '🏙️', title: t('footer.feature1Title'), desc: t('footer.feature1Desc') },
+    { icon: '☁️', title: t('footer.feature2Title'), desc: t('footer.feature2Desc') },
+    { icon: '🔒', title: t('footer.feature3Title'), desc: t('footer.feature3Desc') },
+    { icon: '⚡', title: t('footer.feature4Title'), desc: t('footer.feature4Desc') },
+  ];
+
   return (
-    <footer className="footer">
-      <div className="footer-inner">
-        <div className="footer-grid">
-          <div className="footer-section">
-            <h3 className="footer-brand">{theme.siteLogo ? <img src={theme.siteLogo} alt={theme.siteName} style={{ height: '32px' }} /> : 'Ⓧ'} {theme.siteName || '𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤'}</h3>
-            <p className="footer-desc">{theme.footerText || t('footer.description')}</p>
-            <div className="footer-social">
-              <a href="https://www.instagram.com/xds.3d/" className="social-link" target="_blank" rel="noopener noreferrer" title="Instagram"><FaInstagram /></a>
-              <a href="https://www.youtube.com/channel/UCJJqt2YogJEiJFwuVeH6qhg" className="social-link" target="_blank" rel="noopener noreferrer" title="YouTube"><FaYoutube /></a>
-              <a href="https://www.tiktok.com/@_x.d.s_?lang=en" className="social-link" target="_blank" rel="noopener noreferrer" title="TikTok"><FaTiktok /></a>
-              <a href="https://discord.gg/YcWzvXsvbX" className="social-link" target="_blank" rel="noopener noreferrer" title="Discord"><FaDiscord /></a>
+    <footer className="bg-surface-deep mt-section-gap bg-surface-container-lowest border-t border-outline-variant/20">
+      <div className="max-w-container-max mx-auto px-margin-edge py-section-gap">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-gutter mb-12">
+          {features.map((f, i) => (
+            <div key={i}>
+              <div className="text-2xl mb-3">{f.icon}</div>
+              <h4 className="font-headline-sm text-headline-sm text-on-surface mb-1">{f.title}</h4>
+              <p className="text-text-muted text-sm">{f.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-8 border-t border-outline-variant/10">
+          <div>
+            <h5 className="font-label-caps text-label-caps text-on-surface mb-4">{t('footer.companyTitle')}</h5>
+            <div className="flex flex-col gap-3">
+              <Link to="/" className="text-text-muted hover:text-on-surface text-sm transition-colors">{t('footer.home')}</Link>
+              <Link to="/shop" className="text-text-muted hover:text-on-surface text-sm transition-colors">{t('footer.shop')}</Link>
+              <Link to="/contact" className="text-text-muted hover:text-on-surface text-sm transition-colors">{t('footer.contact')}</Link>
+              <Link to="/faq" className="text-text-muted hover:text-on-surface text-sm transition-colors">{t('footer.faq')}</Link>
             </div>
           </div>
-          <div className="footer-section">
-            <h4>{t('footer.quickLinks')}</h4>
-            <Link to="/shop">{t('footer.allProducts')}</Link>
-            <Link to="/shop?category=maps">Maps</Link>
-            <Link to="/shop?category=mlo">MLOs</Link>
-            <Link to="/shop?category=interior">{t('footer.allProducts') === 'All Products' ? 'Interiors' : 'ديكورات'}</Link>
+          <div>
+            <h5 className="font-label-caps text-label-caps text-on-surface mb-4">{t('footer.supportTitle')}</h5>
+            <div className="flex flex-col gap-3">
+              <Link to="/terms" className="text-text-muted hover:text-on-surface text-sm transition-colors">{t('footer.terms')}</Link>
+              <Link to="/refund" className="text-text-muted hover:text-on-surface text-sm transition-colors">{t('footer.refund')}</Link>
+            </div>
           </div>
-          <div className="footer-section">
-            <h4>{t('footer.support')}</h4>
-            <Link to="/contact">{t('footer.contact')}</Link>
-            <Link to="/faq">{t('footer.faq')}</Link>
-            <Link to="/terms">{t('footer.termsOfService')}</Link>
-            <Link to="/refund">{t('footer.refundPolicy')}</Link>
+          <div>
+            <h5 className="font-label-caps text-label-caps text-on-surface mb-4">{t('footer.paymentsTitle')}</h5>
+            <div className="flex flex-wrap gap-2">
+              <span className="px-3 py-1.5 bg-surface-container-high rounded-lg text-xs font-semibold">Visa</span>
+              <span className="px-3 py-1.5 bg-surface-container-high rounded-lg text-xs font-semibold">MC</span>
+              <span className="px-3 py-1.5 bg-surface-container-high rounded-lg text-xs font-semibold">PP</span>
+              <span className="px-3 py-1.5 bg-surface-container-high rounded-lg text-xs font-semibold">CB</span>
+            </div>
           </div>
-          <div className="footer-section">
-            <h4>{t('footer.features')}</h4>
-            <div className="footer-feature"><FiShoppingCart /> {t('footer.instantDelivery')}</div>
-            <div className="footer-feature"><FiShield /> {t('footer.securePayment')}</div>
-            <div className="footer-feature"><FiHeadphones /> {t('footer.support247')}</div>
-            <div className="footer-feature"><FiMail /> {t('footer.emailUpdates')}</div>
+          <div>
+            <h5 className="font-label-caps text-label-caps text-on-surface mb-4">{t('footer.socialTitle')}</h5>
+            <div className="flex gap-3">
+              <a href="#" className="p-2.5 bg-surface-container-high rounded-lg text-text-muted hover:text-primary hover:bg-surface-container-higher transition-all text-sm">
+                <FaDiscord size={18} />
+              </a>
+              <a href="#" className="p-2.5 bg-surface-container-high rounded-lg text-text-muted hover:text-primary hover:bg-surface-container-higher transition-all text-sm">
+                <FiTwitter size={18} />
+              </a>
+              <a href="#" className="p-2.5 bg-surface-container-high rounded-lg text-text-muted hover:text-primary hover:bg-surface-container-higher transition-all text-sm">
+                <FiMail size={18} />
+              </a>
+            </div>
           </div>
         </div>
-        <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} 𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤. جميع الحقوق محفوظة &bull; {t('footer.copyright')}</p>
-          <div className="footer-payments">
-            <span className="payment-badge">Visa</span>
-            <span className="payment-badge">MC</span>
-            <span className="payment-badge">PP</span>
-            <span className="payment-badge">BTC</span>
-          </div>
+      </div>
+
+      <div className="border-t border-outline-variant/10 py-8 px-margin-edge">
+        <div className="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-xs text-text-muted">
+            &copy; {new Date().getFullYear()} {theme.siteName || '𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤'}. {t('footer.copyright')}
+          </p>
         </div>
       </div>
     </footer>

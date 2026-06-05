@@ -1,167 +1,182 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { FiLock, FiCheck, FiCreditCard, FiUser, FiPercent } from 'react-icons/fi';
-import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { FiCreditCard, FiUser, FiCheckCircle, FiShoppingCart, FiArrowLeft } from 'react-icons/fi';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import toast from 'react-hot-toast';
+import axios from 'axios';
 
 export default function Checkout() {
-  const { api, user } = useAuth();
-  const { items, totalPrice, clearCart } = useCart();
   const { t } = useLanguage();
+  const { cart, totalPrice, clearCart } = useCart();
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const [coupon, setCoupon] = useState('');
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [couponMsg, setCouponMsg] = useState('');
   const [loading, setLoading] = useState(false);
-  const [completed, setCompleted] = useState(false);
-  const [couponCode, setCouponCode] = useState('');
-  const [discount, setDiscount] = useState(0);
-  const [appliedCoupon, setAppliedCoupon] = useState(null);
-  const [couponLoading, setCouponLoading] = useState(false);
-
-  const finalTotal = Math.max(0, totalPrice - discount);
+  const [success, setSuccess] = useState(false);
 
   const handleApplyCoupon = async () => {
-    if (!couponCode.trim()) return;
-    setCouponLoading(true);
+    if (!coupon) return;
     try {
-      const categories = [...new Set(items.map(i => i.category).filter(Boolean))];
-      const { data } = await api.post('/coupons/validate', {
-        code: couponCode.trim(),
-        totalAmount: totalPrice,
-        productCategories: categories.length > 0 ? categories : undefined,
-      });
-      setAppliedCoupon(data.coupon);
-      setDiscount(data.discount);
-      toast.success(`${t('checkout.couponApplied')}${data.discount.toFixed(2)}`);
-    } catch (err) {
-      toast.error(err.response?.data?.message || t('checkout.invalidCoupon'));
-      setAppliedCoupon(null);
-      setDiscount(0);
+      const res = await axios.post('/api/coupons/validate', { code: coupon });
+      setCouponDiscount(res.data.discount || 0);
+      setCouponMsg(t('checkout.couponSuccess'));
+    } catch {
+      setCouponDiscount(0);
+      setCouponMsg(t('checkout.couponInvalid'));
     }
-    setCouponLoading(false);
   };
 
-  if (items.length === 0 && !completed) {
+  const finalTotal = Math.max(0, totalPrice - couponDiscount);
+
+  const handleCheckout = async () => {
+    setLoading(true);
+    try {
+      const { data } = await axios.post('/api/orders/create', {
+        items: cart.map(i => ({ product: i._id, quantity: i.quantity })),
+        coupon: coupon || undefined,
+      });
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        clearCart();
+        setSuccess(true);
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || t('checkout.error'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (cart.length === 0 && !success) {
     return (
-      <div className="empty-cart">
-        <h2>{t('checkout.empty')}</h2>
-        <Link to="/shop" className="btn-primary">{t('cart.browseProducts')}</Link>
+      <div className="main-content">
+        <div className="empty-state min-h-[60vh] flex flex-col items-center justify-center">
+          <div className="w-20 h-20 rounded-2xl bg-surface-container-high flex items-center justify-center mb-6">
+            <FiShoppingCart size={36} className="text-text-muted" />
+          </div>
+          <h2>{t('cart.empty')}</h2>
+          <Link to="/shop" className="btn-primary-custom mt-6">{t('cart.browseProducts')}</Link>
+        </div>
       </div>
     );
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const orderItems = items.map(i => ({ productId: i.productId, quantity: i.quantity }));
-      const { data } = await api.post('/orders', { items: orderItems, paymentMethod: 'stripe' });
-
-      if (data.clientSecret) {
-        toast.success('Payment processing (demo mode)');
-      }
-
-      await api.post('/orders/confirm', { paymentId: data.order.paymentId || 'demo_' + Date.now() });
-      clearCart();
-      setCompleted(true);
-      toast.success(t('checkout.orderSuccess'));
-    } catch (err) {
-      toast.error(err.response?.data?.message || t('checkout.checkoutFailed'));
-    }
-    setLoading(false);
-  };
-
-  if (completed) {
+  if (success) {
     return (
-      <div className="checkout-success">
-        <div className="success-icon"><FiCheck /></div>
-        <h1>{t('checkout.success.title')}</h1>
-        <p>{t('checkout.success.subtitle')}</p>
-        <div className="success-actions">
-          <Link to="/dashboard/orders" className="btn-primary">{t('checkout.success.viewOrders')}</Link>
-          <Link to="/shop" className="btn-secondary">{t('checkout.success.continueShopping')}</Link>
+      <div className="main-content">
+        <div className="min-h-[60vh] flex flex-col items-center justify-center px-margin-edge text-center">
+          <div className="w-20 h-20 rounded-full bg-primary-container/30 flex items-center justify-center mb-6">
+            <FiCheckCircle size={36} className="text-primary" />
+          </div>
+          <h1 className="font-headline-md text-headline-md text-on-surface mb-2">{t('checkout.successTitle')}</h1>
+          <p className="text-text-muted mb-6 max-w-md">{t('checkout.successDesc')}</p>
+          <div className="flex gap-4">
+            <button onClick={() => navigate('/dashboard/orders')} className="btn-primary-custom">{t('checkout.viewOrders')}</button>
+            <button onClick={() => navigate('/shop')} className="btn-secondary-custom">{t('checkout.continueShopping')}</button>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="checkout-page">
+    <div className="main-content">
       <div className="page-header">
         <h1>{t('checkout.title')}</h1>
       </div>
 
-      <div className="checkout-grid">
-        <div className="checkout-form-section">
-          <div className="checkout-card">
-            <h3><FiUser /> {t('checkout.account')}</h3>
-            <p>{user?.email} {user?.isVerified && <FiCheck className="verified-icon" />}</p>
-          </div>
+      <div className="max-w-container-max mx-auto px-margin-edge pb-20">
+        <div className="flex flex-col lg:flex-row gap-gutter">
+          {/* Account / Payment section */}
+          <div className="flex-1 space-y-6">
+            <div className="glass-panel rounded-2xl p-6">
+              <h3 className="font-label-caps text-label-caps text-on-surface mb-4 flex items-center gap-2">
+                <FiUser size={16} /> {t('checkout.account')}
+              </h3>
+              {user ? (
+                <div className="flex items-center gap-3">
+                  <img src={user.discordAvatar || `https://ui-avatars.com/api/?name=${user.username}&background=6c5ce7&color=fff`} alt="" className="w-10 h-10 rounded-full" />
+                  <div>
+                    <div className="font-semibold text-on-surface text-sm">{user.username}</div>
+                    <div className="text-text-muted text-xs">{user.email}</div>
+                  </div>
+                </div>
+              ) : (
+                <Link to="/login" className="text-primary hover:underline text-sm">{t('checkout.loginRequired')}</Link>
+              )}
+            </div>
 
-          <div className="checkout-card">
-            <h3><FiCreditCard /> {t('checkout.payment')}</h3>
-            <div className="payment-methods">
-              <label className="payment-option selected">
-                <input type="radio" name="payment" defaultChecked />
-                <span className="payment-label">
-                  <FiCreditCard /> {t('checkout.creditCard')}
-                </span>
-                <span className="payment-badges">Visa MC AMEX</span>
-              </label>
-              <div className="payment-note">
-                <FiLock /> {t('checkout.securePayment')}
+            <div className="glass-panel rounded-2xl p-6">
+              <h3 className="font-label-caps text-label-caps text-on-surface mb-4 flex items-center gap-2">
+                <FiCreditCard size={16} /> {t('checkout.payment')}
+              </h3>
+              <p className="text-text-muted text-sm">{t('checkout.paymentDesc')}</p>
+            </div>
+
+            {/* Coupon */}
+            <div className="glass-panel rounded-2xl p-6">
+              <h3 className="font-label-caps text-label-caps text-on-surface mb-4">{t('checkout.coupon')}</h3>
+              <div className="flex gap-3">
+                <input
+                  type="text"
+                  value={coupon}
+                  onChange={e => setCoupon(e.target.value)}
+                  className="form-input flex-1"
+                  placeholder={t('checkout.couponPlaceholder')}
+                />
+                <button onClick={handleApplyCoupon} className="btn-secondary-custom shrink-0">{t('checkout.apply')}</button>
               </div>
+              {couponMsg && (
+                <p className={`text-sm mt-2 ${couponDiscount ? 'text-accent-electric' : 'text-error'}`}>{couponMsg}</p>
+              )}
             </div>
           </div>
 
-          <button className="btn-primary btn-large btn-full" onClick={handleSubmit} disabled={loading}>
-            {loading ? t('checkout.processing') : `${t('checkout.pay')} $${finalTotal.toFixed(2)}`}
-          </button>
-        </div>
-
-        <div className="checkout-summary">
-          <h3>{t('checkout.orderSummary')}</h3>
-          <div className="checkout-coupon">
-            {appliedCoupon ? (
-              <div className="applied-coupon">
-                <span><FiPercent /> {appliedCoupon.code}</span>
-                <span>-${discount.toFixed(2)}</span>
-                <button onClick={() => { setAppliedCoupon(null); setDiscount(0); setCouponCode(''); }} className="remove-coupon">×</button>
+          {/* Order summary */}
+          <div className="lg:w-80">
+            <div className="glass-panel rounded-2xl p-6 sticky top-24">
+              <h3 className="font-label-caps text-label-caps text-on-surface mb-4">{t('checkout.summary')}</h3>
+              <div className="space-y-3 max-h-60 overflow-y-auto mb-4">
+                {cart.map(item => (
+                  <div key={item._id} className="flex justify-between text-sm">
+                    <span className="text-text-muted truncate">{item.name} × {item.quantity}</span>
+                    <span className="text-on-surface shrink-0">${(item.price * item.quantity).toFixed(2)}</span>
+                  </div>
+                ))}
               </div>
-            ) : (
-              <div className="coupon-input">
-                <input type="text" placeholder={t('checkout.couponCode')} value={couponCode}
-                  onChange={e => setCouponCode(e.target.value.toUpperCase())} />
-                <button onClick={handleApplyCoupon} disabled={couponLoading || !couponCode.trim()}>
-                  {couponLoading ? '...' : t('checkout.apply')}
-                </button>
+              <div className="space-y-2 text-sm border-t border-outline-variant/20 pt-3">
+                <div className="flex justify-between text-text-muted">
+                  <span>{t('cart.subtotal')}</span>
+                  <span className="text-on-surface">${totalPrice.toFixed(2)}</span>
+                </div>
+                {couponDiscount > 0 && (
+                  <div className="flex justify-between text-accent-electric">
+                    <span>{t('checkout.discount')}</span>
+                    <span>-${couponDiscount.toFixed(2)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between font-semibold pt-2 border-t border-outline-variant/20">
+                  <span className="text-on-surface">{t('cart.total')}</span>
+                  <span className="font-price-tag text-price-tag text-primary">${finalTotal.toFixed(2)}</span>
+                </div>
               </div>
-            )}
-          </div>
-          {items.map(item => (
-            <div key={item.productId} className="checkout-item">
-              <div className="checkout-item-info">
-                <span className="checkout-item-name">{item.name}</span>
-                <span className="checkout-item-qty">x{item.quantity}</span>
-              </div>
-              <span className="checkout-item-price">${(item.price * item.quantity).toFixed(2)}</span>
+              <button
+                onClick={handleCheckout}
+                disabled={loading || !user}
+                className="btn-primary-custom w-full mt-6 flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : (
+                  <>{t('checkout.payButton')} — ${finalTotal.toFixed(2)}</>
+                )}
+              </button>
+              <button onClick={() => navigate('/cart')} className="btn-secondary-custom w-full mt-3 flex items-center justify-center gap-2 text-sm">
+                <FiArrowLeft size={16} /> {t('cart.continueShopping')}
+              </button>
             </div>
-          ))}
-          <div className="checkout-divider"></div>
-          <div className="checkout-total">
-            <span>{t('checkout.subtotal')}</span>
-            <span>${totalPrice.toFixed(2)}</span>
-          </div>
-          {discount > 0 && (
-            <div className="checkout-total checkout-discount">
-              <span>{t('checkout.discount')}</span>
-              <span style={{ color: '#10b981' }}>-${discount.toFixed(2)}</span>
-            </div>
-          )}
-          <div className="checkout-divider"></div>
-          <div className="checkout-total">
-            <span>{t('checkout.total')}</span>
-            <span className="checkout-total-price">${finalTotal.toFixed(2)}</span>
           </div>
         </div>
       </div>

@@ -1,141 +1,152 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { FiShoppingCart, FiCheck, FiDownload, FiStar, FiShield, FiClock, FiArrowLeft } from 'react-icons/fi';
 import axios from 'axios';
+import { FiShoppingCart, FiArrowLeft, FiStar, FiCheck, FiX, FiTrendingUp } from 'react-icons/fi';
 import { useCart } from '../context/CartContext';
 import { useLanguage } from '../context/LanguageContext';
 import toast from 'react-hot-toast';
-import ProductCard from '../components/ProductCard';
-
-const API = process.env.REACT_APP_API_URL || '/api';
 
 export default function ProductDetail() {
-  const { slug } = useParams();
-  const { addItem } = useCart();
+  const { id } = useParams();
+  const { addToCart } = useCart();
   const { t } = useLanguage();
   const [product, setProduct] = useState(null);
-  const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedImage, setSelectedImage] = useState(0);
 
   useEffect(() => {
-    setLoading(true);
-    axios.get(`${API}/products/${slug}`)
-      .then(({ data }) => {
-        setProduct(data.product);
-        setSelectedImage(0);
-        return axios.get(`${API}/products`, { params: { category: data.product.category, limit: 4 } });
-      })
-      .then(({ data }) => setRelated(data.products.filter(p => p.slug !== slug).slice(0, 4)))
+    axios.get(`/api/products/${id}`)
+      .then(res => setProduct(res.data.product || res.data))
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [slug]);
+  }, [id]);
 
-  if (loading) return <div className="loading-screen"><div className="loader"></div></div>;
-  if (!product) return <div className="empty-state"><h2>{t('product.notFound')}</h2><Link to="/shop">{t('product.backToShop')}</Link></div>;
-
-  const price = product.salePrice || product.price;
-  const hasDiscount = product.salePrice && product.salePrice < product.price;
-  const allImages = [];
-  if (product.thumbnail) allImages.push(product.thumbnail);
-  if (product.images?.length) allImages.push(...product.images);
-  const images = allImages.length > 0 ? allImages : ['https://via.placeholder.com/800x600/1a1a2e/6c5ce7?text=MLO'];
-
-  const handleAddToCart = () => {
-    addItem(product);
-    toast.success(`${product.name} ${t('product.addedToCart')}`);
+  const handleAdd = () => {
+    if (!product) return;
+    addToCart(product);
+    toast.success(t('shop.addedToCart'));
   };
 
-  return (
-    <div className="product-detail">
-      <Link to="/shop" className="back-link"><FiArrowLeft /> {t('product.backToShop')}</Link>
+  if (loading) {
+    return (
+      <div className="main-content min-h-[60vh] flex items-center justify-center">
+        <div className="loader" />
+      </div>
+    );
+  }
 
-      <div className="product-detail-grid">
-        <div className="product-gallery">
-          <div className="main-image">
-            <img src={images[selectedImage]} alt={product.name} />
-            {hasDiscount && <span className="product-badge sale">-{Math.round((1 - product.salePrice / product.price) * 100)}%</span>}
-          </div>
-          {images.length > 1 && (
-            <div className="image-thumbnails">
-              {images.map((img, i) => (
-                <button key={i} className={`thumb-btn ${selectedImage === i ? 'active' : ''}`} onClick={() => setSelectedImage(i)}>
-                  <img src={img} alt={`${product.name} ${i + 1}`} />
-                </button>
-              ))}
-            </div>
-          )}
+  if (!product) {
+    return (
+      <div className="main-content min-h-[60vh] flex items-center justify-center px-margin-edge">
+        <div className="text-center">
+          <div className="text-6xl mb-4">😕</div>
+          <h2 className="font-headline-sm text-headline-sm text-on-surface mb-2">{t('productDetail.notFound')}</h2>
+          <Link to="/shop" className="btn-primary-custom inline-flex items-center gap-2 mt-4">
+            <FiArrowLeft size={16} /> {t('productDetail.backToShop')}
+          </Link>
         </div>
+      </div>
+    );
+  }
 
-        <div className="product-info">
-          <span className="product-category">{product.category}</span>
-          <h1>{product.name}</h1>
-          <div className="product-rating-row">
-            {product.rating > 0 && (
-              <span className="rating"><FiStar /> {product.rating}</span>
-            )}
-            <span className="sales-count"><FiDownload /> {product.salesCount} {t('product.sold')}</span>
-            <span className="version">v{product.version}</span>
-          </div>
-          <div className="product-price-section">
-            {hasDiscount ? (
-              <>
-                <span className="current-price-large">${product.salePrice.toFixed(2)}</span>
-                <span className="old-price-large">${product.price.toFixed(2)}</span>
-              </>
-            ) : (
-              <span className="current-price-large">${product.price.toFixed(2)}</span>
-            )}
-          </div>
-          <p className="product-description">{product.description}</p>
+  const isOnSale = product.oldPrice && product.oldPrice > product.price;
 
-          {product.features?.length > 0 && (
-            <div className="product-features">
-              <h3>{t('product.features')}</h3>
-              <ul>
-                {product.features.map((f, i) => (
-                  <li key={i}><FiCheck /> {f}</li>
-                ))}
-              </ul>
+  return (
+    <div className="main-content">
+      <div className="max-w-container-max mx-auto px-margin-edge py-8">
+        <Link to="/shop" className="inline-flex items-center gap-2 text-text-muted hover:text-on-surface mb-6 transition-colors text-sm">
+          <FiArrowLeft size={16} /> {t('productDetail.backToShop')}
+        </Link>
+
+        <div className="flex flex-col lg:flex-row gap-gutter mb-12">
+          {/* Image */}
+          <div className="lg:w-1/2">
+            <div className="glass-card rounded-3xl overflow-hidden aspect-[4/3] bg-surface-container-high">
+              {product.images?.[0] ? (
+                <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-text-muted">
+                  <FiTrendingUp size={64} />
+                </div>
+              )}
             </div>
-          )}
-
-          {product.requirements?.length > 0 && (
-            <div className="product-requirements">
-              <h3>{t('product.requirements')}</h3>
-              <ul>
-                {product.requirements.map((r, i) => (
-                  <li key={i}>{r}</li>
+            {product.images?.length > 1 && (
+              <div className="flex gap-3 mt-4 overflow-x-auto pb-2">
+                {product.images.map((img, i) => (
+                  <div key={i} className="w-20 h-20 rounded-xl overflow-hidden bg-surface-container-high shrink-0 border border-outline-variant/20 hover:border-primary transition-colors cursor-pointer">
+                    <img src={img} alt="" className="w-full h-full object-cover" />
+                  </div>
                 ))}
-              </ul>
-            </div>
-          )}
-
-          <div className="product-meta-info">
-            {product.fileSize && <span><FiDownload /> {t('product.fileSize')}: {product.fileSize}</span>}
-            <span><FiClock /> {t('product.updated')}: {new Date(product.updatedAt).toLocaleDateString()}</span>
+              </div>
+            )}
           </div>
 
-          <div className="product-actions">
-            <button className="btn-primary btn-large" onClick={handleAddToCart} disabled={!product.inStock}>
-              <FiShoppingCart /> {product.inStock ? t('product.addToCart') : t('product.outOfStock')}
+          {/* Info */}
+          <div className="lg:w-1/2">
+            <span className="font-label-caps text-label-caps text-xs text-primary uppercase tracking-wider">{product.category}</span>
+            <h1 className="font-headline-md text-headline-md text-on-surface mt-2 mb-4 font-bold">{product.name}</h1>
+
+            <div className="flex items-center gap-1 mb-4">
+              {[1, 2, 3, 4, 5].map(s => (
+                <FiStar key={s} size={16} className="text-accent-electric" fill={s <= 4 ? 'currentColor' : 'none'} />
+              ))}
+              <span className="text-text-muted text-sm mr-2">(4.0)</span>
+            </div>
+
+            <div className="flex items-center gap-3 mb-6">
+              <span className="font-price-tag text-price-tag text-primary">${product.price.toFixed(2)}</span>
+              {isOnSale && (
+                <span className="text-text-muted text-lg line-through">${product.oldPrice.toFixed(2)}</span>
+              )}
+            </div>
+
+            <p className="text-text-muted text-body-md leading-relaxed mb-8">{product.description}</p>
+
+            {/* Features */}
+            {product.features?.length > 0 && (
+              <div className="mb-8">
+                <h3 className="font-label-caps text-label-caps text-on-surface mb-3">{t('productDetail.features')}</h3>
+                <ul className="space-y-2">
+                  {product.features.map((feat, i) => (
+                    <li key={i} className="flex items-center gap-2 text-sm text-text-muted">
+                      <FiCheck size={14} className="text-accent-electric shrink-0" /> {feat}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Requirements */}
+            {product.requirements?.length > 0 && (
+              <div className="mb-8">
+                <h3 className="font-label-caps text-label-caps text-on-surface mb-3">{t('productDetail.requirements')}</h3>
+                <ul className="space-y-2">
+                  {product.requirements.map((req, i) => (
+                    <li key={i} className="flex items-center gap-2 text-sm text-text-muted">
+                      <FiX size={14} className="text-error shrink-0" /> {req}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Status */}
+            <div className="flex items-center gap-2 mb-6">
+              <span className={`w-2 h-2 rounded-full ${product.inStock ? 'bg-accent-electric' : 'bg-error'}`} />
+              <span className={`text-sm ${product.inStock ? 'text-accent-electric' : 'text-error'}`}>
+                {product.inStock ? t('productDetail.inStock') : t('productDetail.outOfStock')}
+              </span>
+            </div>
+
+            <button
+              onClick={handleAdd}
+              disabled={!product.inStock}
+              className="btn-primary-custom w-full flex items-center justify-center gap-2 py-4 disabled:opacity-50"
+            >
+              <FiShoppingCart size={18} /> {t('productDetail.addToCart')}
             </button>
-          </div>
-
-          <div className="product-guarantee">
-            <FiShield /> {t('product.secureCheckout')}
           </div>
         </div>
       </div>
-
-      {related.length > 0 && (
-        <section className="related-section">
-          <h2>{t('product.related')}</h2>
-          <div className="products-grid">
-            {related.map(p => <ProductCard key={p._id} product={p} />)}
-          </div>
-        </section>
-      )}
     </div>
   );
 }
