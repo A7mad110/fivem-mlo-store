@@ -227,7 +227,9 @@ const en = {
     paidVia: 'Paid via',
     status: {
       completed: 'Completed',
+      processing: 'Processing',
       pending: 'Pending',
+      cancelled: 'Cancelled',
       failed: 'Failed',
     },
   },

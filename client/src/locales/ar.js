@@ -227,7 +227,9 @@ const ar = {
     paidVia: 'الدفع عبر',
     status: {
       completed: 'مكتمل',
+      processing: 'قيد المعالجة',
       pending: 'قيد الانتظار',
+      cancelled: 'ملغي',
       failed: 'فشل',
     },
   },

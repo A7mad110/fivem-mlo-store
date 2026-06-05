@@ -11,17 +11,20 @@ export default function Orders() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/orders')
+    const fetchOrders = () => api.get('/orders')
       .then(({ data }) => setOrders(data.orders || []))
-      .catch(() => {})
-      .finally(() => setLoading(false));
+      .catch(() => {});
+    fetchOrders().finally(() => setLoading(false));
+    const interval = setInterval(fetchOrders, 10000);
+    return () => clearInterval(interval);
   }, [api]);
 
   const statusIcon = (status) => {
     switch (status) {
       case 'completed': return <FiCheck className="text-accent-electric" size={16} />;
+      case 'processing': return <FiClock className="text-primary" size={16} />;
       case 'pending': return <FiClock className="text-yellow-400" size={16} />;
-      case 'failed': return <FiX className="text-error" size={16} />;
+      case 'cancelled': case 'failed': return <FiX className="text-error" size={16} />;
       default: return <FiPackage className="text-text-muted" size={16} />;
     }
   };
@@ -29,7 +32,9 @@ export default function Orders() {
   const statusText = (status) => {
     switch (status) {
       case 'completed': return t('orders.status.completed');
+      case 'processing': return t('orders.status.processing');
       case 'pending': return t('orders.status.pending');
+      case 'cancelled': return t('orders.status.cancelled');
       case 'failed': return t('orders.status.failed');
       default: return status;
     }
@@ -71,8 +76,9 @@ export default function Orders() {
                     </span>
                     <span className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full ${
                       order.status === 'completed' ? 'bg-accent-electric/10 text-accent-electric' :
+                      order.status === 'processing' ? 'bg-primary/10 text-primary' :
                       order.status === 'pending' ? 'bg-yellow-400/10 text-yellow-400' :
-                      order.status === 'failed' ? 'bg-error/10 text-error' :
+                      order.status === 'cancelled' || order.status === 'failed' ? 'bg-error/10 text-error' :
                       'bg-surface-variant/30 text-text-muted'
                     }`}>
                       {statusIcon(order.status)} {statusText(order.status)}
