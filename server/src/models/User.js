@@ -38,6 +38,7 @@ userSchema.methods.toJSON = function () {
   delete obj.verificationCodeExpires;
   delete obj.resetPasswordCode;
   delete obj.resetPasswordExpires;
+  obj.verified = obj.isVerified;
   return obj;
 };
 
