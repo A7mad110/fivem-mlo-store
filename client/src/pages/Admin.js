@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FiPackage, FiUsers, FiShoppingCart, FiDollarSign, FiPlus, FiEdit2, FiTrash2, FiX, FiUserX, FiPercent, FiSettings, FiRotateCcw, FiLink, FiSend, FiSave } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { useTheme, applyTheme } from '../context/ThemeContext';
