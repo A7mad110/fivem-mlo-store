@@ -7,18 +7,18 @@ import { useLanguage } from '../context/LanguageContext';
 import toast from 'react-hot-toast';
 
 export default function ProductDetail() {
-  const { id } = useParams();
+  const { slug } = useParams();
   const { addToCart } = useCart();
   const { t } = useLanguage();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get(`/api/products/${id}`)
+    axios.get(`/api/products/${slug}`)
       .then(res => setProduct(res.data.product || res.data))
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [slug]);
 
   const handleAdd = () => {
     if (!product) return;

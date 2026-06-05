@@ -34,7 +34,7 @@ export default function ProductCard({ product }) {
 
   return (
     <Link
-      to={`/product/${product._id}`}
+      to={`/shop/${product._id}`}
       ref={cardRef}
       className="product-card glass-card rounded-2xl overflow-hidden flex flex-col group cursor-pointer"
     >
