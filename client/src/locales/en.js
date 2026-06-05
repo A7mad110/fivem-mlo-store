@@ -295,9 +295,9 @@ const en = {
       statusUpdated: 'Status updated',
       updateFailed: 'Update failed',
       pending: 'Pending',
+      processing: 'Processing',
       completed: 'Completed',
-      failed: 'Failed',
-      refunded: 'Refunded',
+      cancelled: 'Cancelled',
     },
     user: {
       title: 'Users',

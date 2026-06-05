@@ -263,7 +263,7 @@ export default function Admin() {
                     <span className="font-mono text-xs text-text-muted">#{o._id.toString().slice(-8).toUpperCase()}</span>
                     <span className="text-sm text-on-surface">{o.user?.username || o.user?.email}</span>
                     <span className="font-price-tag text-price-tag text-primary text-sm">${(o.totalAmount || 0).toFixed(2)}</span>
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${statusColor[o.status] || 'text-text-muted'}`}>{o.status}</span>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${statusColor[o.status] || 'text-text-muted'}`}>{t('admin.order.' + o.status) || o.status}</span>
                   </div>
                 ))}
                 {(!dashboard.recentOrders || dashboard.recentOrders.length === 0) && (
@@ -322,9 +322,9 @@ export default function Admin() {
                     <select value={o.status} onChange={e => handleStatusChange(o._id, e.target.value)}
                       className="bg-surface-container-low border border-outline-variant/30 rounded-lg px-2 py-1.5 text-xs text-on-surface focus:outline-none focus:border-primary">
                       <option value="pending">{t('admin.order.pending')}</option>
+                      <option value="processing">{t('admin.order.processing')}</option>
                       <option value="completed">{t('admin.order.completed')}</option>
-                      <option value="failed">{t('admin.order.failed')}</option>
-                      <option value="refunded">{t('admin.order.refunded')}</option>
+                      <option value="cancelled">{t('admin.order.cancelled')}</option>
                     </select>
                     <span className="text-text-muted text-xs">{new Date(o.createdAt).toLocaleDateString()}</span>
                   </div>

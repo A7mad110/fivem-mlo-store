@@ -295,9 +295,9 @@ const ar = {
       statusUpdated: 'تم تحديث الحالة',
       updateFailed: 'فشل التحديث',
       pending: 'قيد الانتظار',
+      processing: 'قيد المعالجة',
       completed: 'مكتمل',
-      failed: 'فشل',
-      refunded: 'مسترجع',
+      cancelled: 'ملغي',
     },
     user: {
       title: 'المستخدمين',
