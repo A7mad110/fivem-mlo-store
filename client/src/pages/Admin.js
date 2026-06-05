@@ -699,7 +699,7 @@ function CouponModal({ coupon, onClose, onSave, api, t }) {
             </div>
             <div>
               <label className="font-label-caps text-label-caps text-text-muted text-xs mb-1.5 block">{t('admin.coupon.expiryDate')}</label>
-              <input type="date" className="form-input" value={form.expiresAt} onChange={e => setForm({ ...form, expiresAt: e.target.value })} />
+              <input type="date" className="form-input" dir="ltr" value={form.expiresAt} onChange={e => setForm({ ...form, expiresAt: e.target.value })} />
             </div>
           </div>
           <div>
