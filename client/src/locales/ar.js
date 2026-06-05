@@ -136,6 +136,16 @@ const ar = {
       subtitle: 'حاول تعديل البحث أو معايير التصفية',
     },
   },
+  productDetail: {
+    notFound: 'المنتج غير موجود',
+    backToShop: 'العودة إلى المتجر',
+    features: 'المميزات',
+    requirements: 'المتطلبات',
+    inStock: 'متوفر',
+    outOfStock: 'غير متوفر',
+    addToCart: 'أضف إلى السلة',
+    notFoundEmoji: '😕',
+  },
   product: {
     backToShop: 'العودة إلى المتجر',
     features: 'المميزات',

@@ -136,6 +136,16 @@ const en = {
       subtitle: 'Try adjusting your search or filter criteria',
     },
   },
+  productDetail: {
+    notFound: 'Product not found',
+    backToShop: 'Back to Shop',
+    features: 'Features',
+    requirements: 'Requirements',
+    inStock: 'In Stock',
+    outOfStock: 'Out of Stock',
+    addToCart: 'Add to Cart',
+    notFoundEmoji: '😕',
+  },
   product: {
     backToShop: 'Back to Shop',
     features: 'Features',
