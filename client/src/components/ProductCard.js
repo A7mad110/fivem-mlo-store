@@ -74,7 +74,7 @@ export default function ProductCard({ product }) {
           {[1, 2, 3, 4, 5].map(s => (
             <FiStar key={s} size={14} className="text-accent-electric" fill={s <= 4 ? 'currentColor' : 'none'} />
           ))}
-          <span className="text-text-muted text-xs mr-2">(4.0)</span>
+          <span className="text-text-muted text-xs mr-2">{t('product.rating')}</span>
         </div>
         <div className="flex items-center gap-2 mt-2">
           <span className="font-price-tag text-price-tag text-primary">

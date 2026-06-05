@@ -72,7 +72,7 @@ export default function Orders() {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <span className="font-mono text-sm text-on-surface font-bold">
-                      #{order._id.toString().slice(-8).toUpperCase()}
+                      {t('orders.orderPrefix')}{order._id.toString().slice(-8).toUpperCase()}
                     </span>
                     <span className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full ${
                       order.status === 'completed' ? 'bg-accent-electric/10 text-accent-electric' :
@@ -91,7 +91,7 @@ export default function Orders() {
                     <div key={i} className="flex items-center justify-between text-sm py-1.5 border-b border-outline-variant/10 last:border-0">
                       <span className="text-on-surface">{item.name || item.product?.name}</span>
                       <div className="flex items-center gap-4">
-                        <span className="text-text-muted">x{item.quantity}</span>
+                        <span className="text-text-muted">{t('orders.quantityPrefix')}{item.quantity}</span>
                         <span className="font-price-tag text-price-tag text-primary text-sm">
                           ${(item.price * item.quantity).toFixed(2)}
                         </span>
@@ -106,7 +106,7 @@ export default function Orders() {
                     </span>
                   </span>
                   <span className="text-text-muted text-xs">
-                    {t('orders.paidVia')} {order.paymentMethod || 'Stripe'}
+                    {t('orders.paidVia')} {order.paymentMethod || t('orders.defaultPayment')}
                   </span>
                 </div>
               </div>

@@ -38,7 +38,7 @@ export default function Navbar() {
             {theme.siteLogo ? (
               <img src={theme.siteLogo} alt={theme.siteName} className="h-8" />
             ) : (
-              <span className="text-xl">🏙️</span>
+              <span className="text-xl">{t('nav.logoFallback')}</span>
             )}
             {theme.siteName || '𝕋𝕙𝕖 𝕏 𝔻𝕖𝕤𝕚𝕘𝕟𝕤'}
           </Link>

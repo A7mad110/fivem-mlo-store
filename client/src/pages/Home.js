@@ -84,10 +84,10 @@ export default function Home() {
           </div>
           <div className="flex-1 grid grid-cols-2 gap-4 max-w-md">
             {[
-              { value: '150+', label: t('home.statProducts') },
-              { value: '2.3k+', label: t('home.statCustomers') },
-              { value: '4.9', label: t('home.statRating') },
-              { value: '24/7', label: t('home.statSupport') },
+              { value: t('home.statProductsValue'), label: t('home.statProducts') },
+              { value: t('home.statCustomersValue'), label: t('home.statCustomers') },
+              { value: t('home.statRatingValue'), label: t('home.statRating') },
+              { value: t('home.statSupportValue'), label: t('home.statSupport') },
             ].map((stat, i) => (
               <div key={i} className="glass-card rounded-2xl p-6 text-center">
                 <div className="font-display-lg text-display-lg-mobile md:text-display-lg text-primary font-bold">{stat.value}</div>
@@ -152,7 +152,7 @@ export default function Home() {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-gutter">
               {categories.slice(0, 5).map(cat => (
                 <Link key={cat._id} to={`/shop?category=${cat.name}`} className="glass-card rounded-2xl p-6 text-center reveal-card">
-                  <div className="text-4xl mb-3">{cat.icon || '🏙️'}</div>
+                  <div className="text-4xl mb-3">{cat.icon || t('home.categoryFallback')}</div>
                   <h3 className="font-headline-sm text-headline-sm text-on-surface text-base">{cat.name}</h3>
                   <p className="text-text-muted text-xs mt-1">{cat.productCount || 0} {t('home.products')}</p>
                 </Link>

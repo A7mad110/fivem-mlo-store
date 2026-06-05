@@ -49,10 +49,10 @@ export default function Footer() {
           <div>
             <h5 className="font-label-caps text-label-caps text-on-surface mb-4">{t('footer.paymentsTitle')}</h5>
             <div className="flex flex-wrap gap-2">
-              <span className="px-3 py-1.5 bg-surface-container-high rounded-lg text-xs font-semibold">Visa</span>
-              <span className="px-3 py-1.5 bg-surface-container-high rounded-lg text-xs font-semibold">MC</span>
-              <span className="px-3 py-1.5 bg-surface-container-high rounded-lg text-xs font-semibold">PP</span>
-              <span className="px-3 py-1.5 bg-surface-container-high rounded-lg text-xs font-semibold">CB</span>
+              <span className="px-3 py-1.5 bg-surface-container-high rounded-lg text-xs font-semibold">{t('footer.paymentVisa')}</span>
+              <span className="px-3 py-1.5 bg-surface-container-high rounded-lg text-xs font-semibold">{t('footer.paymentMc')}</span>
+              <span className="px-3 py-1.5 bg-surface-container-high rounded-lg text-xs font-semibold">{t('footer.paymentPp')}</span>
+              <span className="px-3 py-1.5 bg-surface-container-high rounded-lg text-xs font-semibold">{t('footer.paymentCb')}</span>
             </div>
           </div>
           <div>

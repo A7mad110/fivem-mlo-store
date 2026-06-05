@@ -142,7 +142,7 @@ export default function Checkout() {
               <div className="space-y-3 max-h-60 overflow-y-auto mb-4">
                 {cart.map(item => (
                   <div key={item.productId} className="flex justify-between text-sm">
-                    <span className="text-text-muted truncate">{item.name} × {item.quantity}</span>
+                    <span className="text-text-muted truncate">{item.name} {t('checkout.itemSeparator')} {item.quantity}</span>
                     <span className="text-on-surface shrink-0">${(item.price * item.quantity).toFixed(2)}</span>
                   </div>
                 ))}

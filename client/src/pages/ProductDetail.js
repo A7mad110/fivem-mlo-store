@@ -39,7 +39,7 @@ export default function ProductDetail() {
     return (
       <div className="main-content min-h-[60vh] flex items-center justify-center px-margin-edge">
         <div className="text-center">
-          <div className="text-6xl mb-4">😕</div>
+          <div className="text-6xl mb-4">{t('productDetail.notFoundEmoji')}</div>
           <h2 className="font-headline-sm text-headline-sm text-on-surface mb-2">{t('productDetail.notFound')}</h2>
           <Link to="/shop" className="btn-primary-custom inline-flex items-center gap-2 mt-4">
             <FiArrowLeft size={16} /> {t('productDetail.backToShop')}
@@ -90,7 +90,7 @@ export default function ProductDetail() {
               {[1, 2, 3, 4, 5].map(s => (
                 <FiStar key={s} size={16} className="text-accent-electric" fill={s <= 4 ? 'currentColor' : 'none'} />
               ))}
-              <span className="text-text-muted text-sm mr-2">(4.0)</span>
+              <span className="text-text-muted text-sm mr-2">{t('product.rating')}</span>
             </div>
 
             <div className="flex items-center gap-3 mb-6">

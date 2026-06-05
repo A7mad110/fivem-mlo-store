@@ -39,7 +39,7 @@ function UserRow({ user, onRoleChange, onDelete, t }) {
           <img src={user.discordAvatar || `https://ui-avatars.com/api/?name=${user.username}&background=6c5ce7&color=fff&bold=true`} alt="" className="w-10 h-10 rounded-full shrink-0" />
           <div className="min-w-0">
             <div className="font-semibold text-sm text-on-surface truncate">{user.username}</div>
-            <div className="text-text-muted text-xs truncate">{user.email} {user.isVerified ? '✓' : ''}</div>
+            <div className="text-text-muted text-xs truncate">{user.email} {user.isVerified ? t('admin.verifiedMark') : ''}</div>
             <div className="text-text-muted text-[11px] font-mono mt-0.5">{t('admin.user.id')}: {user._id.toString().slice(-8).toUpperCase()}</div>
           </div>
         </div>
@@ -57,7 +57,7 @@ function UserRow({ user, onRoleChange, onDelete, t }) {
           {user.orders?.length > 0 ? user.orders.map(order => (
             <div key={order._id} className="bg-surface-container-low rounded-xl p-3 space-y-1">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-mono text-text-muted">#{order._id.toString().slice(-8).toUpperCase()}</span>
+                <span className="font-mono text-text-muted">{t('admin.orderHash')}{order._id.toString().slice(-8).toUpperCase()}</span>
                 <span className="text-text-muted">{new Date(order.createdAt).toLocaleDateString()}</span>
                 <span className="font-price-tag text-price-tag text-primary text-xs">${(order.totalAmount || 0).toFixed(2)}</span>
               </div>
@@ -66,7 +66,7 @@ function UserRow({ user, onRoleChange, onDelete, t }) {
                   <div key={i} className="flex items-center gap-2 text-xs text-text-muted">
                     {item.product?.thumbnail && <img src={item.product.thumbnail} alt="" className="w-6 h-6 rounded object-cover" />}
                     <span className="flex-1 truncate">{item.name || item.product?.name}</span>
-                    <span>x{item.quantity}</span>
+                    <span>{t('admin.itemQuantity')}{item.quantity}</span>
                     <span>${(item.price * item.quantity).toFixed(2)}</span>
                   </div>
                 ))}
@@ -210,7 +210,7 @@ export default function Admin() {
       <label className="font-label-caps text-label-caps text-text-muted text-xs mb-1.5 block">{label}</label>
       <div className="flex gap-2 items-center">
         <input type="color" value={themeForm[key] || ''} onChange={e => setThemeForm({ ...themeForm, [key]: e.target.value })} className="w-12 h-10 p-0.5 cursor-pointer rounded-lg border border-outline-variant/30 bg-transparent" />
-        <input className="form-input flex-1" value={themeForm[key] || ''} onChange={e => setThemeForm({ ...themeForm, [key]: e.target.value })} placeholder="#hex" />
+        <input className="form-input flex-1" value={themeForm[key] || ''} onChange={e => setThemeForm({ ...themeForm, [key]: e.target.value })} placeholder={t('admin.colorPlaceholder')} />
       </div>
     </div>
   );
@@ -260,7 +260,7 @@ export default function Admin() {
               <div className="space-y-2">
                 {dashboard.recentOrders?.map(o => (
                   <div key={o._id} className="flex items-center justify-between py-2 border-b border-outline-variant/10 last:border-0">
-                    <span className="font-mono text-xs text-text-muted">#{o._id.toString().slice(-8).toUpperCase()}</span>
+                    <span className="font-mono text-xs text-text-muted">{t('admin.orderHash')}{o._id.toString().slice(-8).toUpperCase()}</span>
                     <span className="text-sm text-on-surface">{o.user?.username || o.user?.email}</span>
                     <span className="font-price-tag text-price-tag text-primary text-sm">${(o.totalAmount || 0).toFixed(2)}</span>
                     <span className={`text-xs px-2 py-0.5 rounded-full ${statusColor[o.status] || 'text-text-muted'}`}>{t('admin.order.' + o.status) || o.status}</span>
@@ -314,7 +314,7 @@ export default function Admin() {
               ) : orders.map(o => (
                 <div key={o._id} className="glass-card rounded-2xl p-4 flex flex-col md:flex-row gap-3 items-start md:items-center justify-between">
                   <div className="min-w-0 flex-1">
-                    <div className="font-mono text-xs text-text-muted">#{o._id.toString().slice(-8).toUpperCase()}</div>
+                    <div className="font-mono text-xs text-text-muted">{t('admin.orderHash')}{o._id.toString().slice(-8).toUpperCase()}</div>
                     <div className="text-sm text-on-surface font-semibold">{o.user?.username || o.user?.email}</div>
                   </div>
                   <div className="flex items-center gap-3">
@@ -364,8 +364,8 @@ export default function Admin() {
                       <div className="font-mono font-semibold text-sm text-on-surface tracking-wider">{c.code}</div>
                       <div className="text-text-muted text-xs">
                         {c.type === 'percentage' ? `${c.value}% ${t('admin.coupon.off')}` : `$${c.value} ${t('admin.coupon.off')}`}
-                        {c.minAmount > 0 && ` | ${t('admin.coupon.min')} $${c.minAmount}`}
-                        {c.maxUses > 0 && ` | ${c.currentUses || 0}/${c.maxUses} ${t('admin.coupon.uses')}`}
+                        {c.minAmount > 0 && ` ${t('admin.coupon.separator')} ${t('admin.coupon.min')} $${c.minAmount}`}
+                        {c.maxUses > 0 && ` ${t('admin.coupon.separator')} ${c.currentUses || 0}/${c.maxUses} ${t('admin.coupon.uses')}`}
                       </div>
                     </div>
                   </div>
@@ -400,15 +400,15 @@ export default function Admin() {
                 <div>
                   <label className="font-label-caps text-label-caps text-text-muted text-xs mb-1.5 block">{t('admin.themeTab.siteLogo')}</label>
                   <div className="flex gap-2">
-                    <input className="form-input flex-1" value={themeForm.siteLogo || ''} onChange={e => setThemeForm({ ...themeForm, siteLogo: e.target.value })} placeholder="https://example.com/logo.png" />
+                    <input className="form-input flex-1" value={themeForm.siteLogo || ''} onChange={e => setThemeForm({ ...themeForm, siteLogo: e.target.value })} placeholder={t('admin.logoPlaceholder')} />
                     <FileUploadBtn onUpload={(url) => setThemeForm({ ...themeForm, siteLogo: url })} />
                   </div>
-                  {themeForm.siteLogo && <img src={themeForm.siteLogo} alt="logo" className="h-12 mt-2 rounded-lg" />}
+                  {themeForm.siteLogo && <img src={themeForm.siteLogo} alt={t('admin.logoAlt')} className="h-12 mt-2 rounded-lg" />}
                 </div>
                 <div>
                   <label className="font-label-caps text-label-caps text-text-muted text-xs mb-1.5 block">{t('admin.themeTab.favicon')}</label>
                   <div className="flex gap-2">
-                    <input className="form-input flex-1" value={themeForm.favicon || ''} onChange={e => setThemeForm({ ...themeForm, favicon: e.target.value })} placeholder="https://example.com/favicon.ico" />
+                    <input className="form-input flex-1" value={themeForm.favicon || ''} onChange={e => setThemeForm({ ...themeForm, favicon: e.target.value })} placeholder={t('admin.faviconPlaceholder')} />
                     <FileUploadBtn onUpload={(url) => setThemeForm({ ...themeForm, favicon: url })} />
                   </div>
                 </div>
@@ -420,7 +420,7 @@ export default function Admin() {
               <div>
                 <label className="font-label-caps text-label-caps text-text-muted text-xs mb-1.5 block">{t('admin.themeTab.bgImage')}</label>
                 <div className="flex gap-2">
-                  <input className="form-input flex-1" value={themeForm.bgImage || ''} onChange={e => setThemeForm({ ...themeForm, bgImage: e.target.value })} placeholder="https://example.com/bg.jpg" />
+                  <input className="form-input flex-1" value={themeForm.bgImage || ''} onChange={e => setThemeForm({ ...themeForm, bgImage: e.target.value })} placeholder={t('admin.bgPlaceholder')} />
                   <FileUploadBtn onUpload={(url) => setThemeForm({ ...themeForm, bgImage: url })} />
                 </div>
                 {themeForm.bgImage && <img src={themeForm.bgImage} alt="bg" className="h-20 mt-2 rounded-lg object-cover" />}
@@ -509,7 +509,7 @@ export default function Admin() {
               <div>
                 <label className="font-label-caps text-label-caps text-text-muted text-xs mb-1.5 block">{t('admin.themeTab.heroBg')}</label>
                 <div className="flex gap-2">
-                  <input className="form-input flex-1" value={themeForm.heroBg || ''} onChange={e => setThemeForm({ ...themeForm, heroBg: e.target.value })} placeholder="https://example.com/hero-bg.jpg" />
+                  <input className="form-input flex-1" value={themeForm.heroBg || ''} onChange={e => setThemeForm({ ...themeForm, heroBg: e.target.value })} placeholder={t('admin.heroBgPlaceholder')} />
                   <FileUploadBtn onUpload={(url) => setThemeForm({ ...themeForm, heroBg: url })} />
                 </div>
                 {themeForm.heroBg && <img src={themeForm.heroBg} alt="hero" className="h-20 mt-2 rounded-lg object-cover" />}
@@ -520,11 +520,11 @@ export default function Admin() {
               <h3 className="font-label-caps text-label-caps text-on-surface">{t('admin.themeTab.extra')}</h3>
               <div>
                 <label className="font-label-caps text-label-caps text-text-muted text-xs mb-1.5 block">{t('admin.themeTab.footerText')}</label>
-                <input className="form-input" value={themeForm.footerText || ''} onChange={e => setThemeForm({ ...themeForm, footerText: e.target.value })} placeholder="Custom footer text" />
+                <input className="form-input" value={themeForm.footerText || ''} onChange={e => setThemeForm({ ...themeForm, footerText: e.target.value })} placeholder={t('admin.footerTextPlaceholder')} />
               </div>
               <div>
                 <label className="font-label-caps text-label-caps text-text-muted text-xs mb-1.5 block">{t('admin.themeTab.customCss')}</label>
-                <textarea rows="6" className="form-input font-mono text-sm" value={themeForm.customCss || ''} onChange={e => setThemeForm({ ...themeForm, customCss: e.target.value })} placeholder="/* your custom CSS here */" />
+                <textarea rows="6" className="form-input font-mono text-sm" value={themeForm.customCss || ''} onChange={e => setThemeForm({ ...themeForm, customCss: e.target.value })} placeholder={t('admin.customCssPlaceholder')} />
               </div>
             </div>
 
@@ -672,7 +672,7 @@ function CouponModal({ coupon, onClose, onSave, api, t }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="font-label-caps text-label-caps text-text-muted text-xs mb-1.5 block">{t('admin.coupon.code')}</label>
-              <input className="form-input uppercase tracking-wider" value={form.code} onChange={e => setForm({ ...form, code: e.target.value })} placeholder="SUMMER20" required />
+              <input className="form-input uppercase tracking-wider" value={form.code} onChange={e => setForm({ ...form, code: e.target.value })} placeholder={t('admin.couponCodePlaceholder')} required />
             </div>
             <div>
               <label className="font-label-caps text-label-caps text-text-muted text-xs mb-1.5 block">{t('admin.coupon.type')}</label>
@@ -704,7 +704,7 @@ function CouponModal({ coupon, onClose, onSave, api, t }) {
           </div>
           <div>
             <label className="font-label-caps text-label-caps text-text-muted text-xs mb-1.5 block">{t('admin.coupon.categories')}</label>
-            <input className="form-input" value={form.categories} onChange={e => setForm({ ...form, categories: e.target.value })} placeholder="mlo, maps, interior" />
+            <input className="form-input" value={form.categories} onChange={e => setForm({ ...form, categories: e.target.value })} placeholder={t('admin.couponCategoriesPlaceholder')} />
           </div>
           <button type="submit" disabled={loading} className="btn-primary-custom w-full flex items-center justify-center gap-2 py-3.5 disabled:opacity-50">
             {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : null}
@@ -823,9 +823,9 @@ function ProductModal({ product, onClose, onSave, api, t, uploadImage }) {
           <div>
             <label className="font-label-caps text-label-caps text-text-muted text-xs mb-1.5 block">{t('admin.product.thumbnail')}</label>
             <div className="flex gap-2">
-              <input className="form-input flex-1" value={form.thumbnail} onChange={e => setForm({ ...form, thumbnail: e.target.value })} placeholder="URL or upload" />
+              <input className="form-input flex-1" value={form.thumbnail} onChange={e => setForm({ ...form, thumbnail: e.target.value })} placeholder={t('admin.thumbnailPlaceholder')} />
               <label className="px-3 py-2.5 rounded-lg bg-primary-container/20 text-primary text-xs font-label-caps cursor-pointer hover:brightness-110 transition-all shrink-0">
-                <input type="file" accept="image/*" onChange={(e) => handleUpload(e, 'thumbnail')} hidden />{uploading ? '...' : t('admin.product.upload')}
+                <input type="file" accept="image/*" onChange={(e) => handleUpload(e, 'thumbnail')} hidden />{uploading ? t('admin.uploading') : t('admin.product.upload')}
               </label>
             </div>
             {form.thumbnail && (
@@ -838,9 +838,9 @@ function ProductModal({ product, onClose, onSave, api, t, uploadImage }) {
           <div>
             <label className="font-label-caps text-label-caps text-text-muted text-xs mb-1.5 block">{t('admin.product.gallery')} ({form.images.length})</label>
             <div className="flex gap-2">
-              <input className="form-input flex-1" disabled placeholder="Extra product images" />
+              <input className="form-input flex-1" disabled placeholder={t('admin.galleryPlaceholder')} />
               <label className="px-3 py-2.5 rounded-lg bg-primary-container/20 text-primary text-xs font-label-caps cursor-pointer hover:brightness-110 transition-all shrink-0">
-                <input type="file" accept="image/*" onChange={(e) => handleUpload(e, 'gallery')} hidden />{uploading ? '...' : t('admin.product.upload')}
+                <input type="file" accept="image/*" onChange={(e) => handleUpload(e, 'gallery')} hidden />{uploading ? t('admin.uploading') : t('admin.product.upload')}
               </label>
             </div>
             {form.images.length > 0 && (
@@ -849,8 +849,8 @@ function ProductModal({ product, onClose, onSave, api, t, uploadImage }) {
                   <div key={i} className="relative group">
                     <img src={img} alt="" className="w-20 h-20 rounded-lg object-cover" />
                     <div className="absolute inset-0 bg-black/60 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
-                      <button type="button" onClick={() => moveImage(i, -1)} disabled={i === 0} className="p-1 text-white text-xs hover:text-primary disabled:opacity-30">←</button>
-                      <button type="button" onClick={() => moveImage(i, 1)} disabled={i === form.images.length - 1} className="p-1 text-white text-xs hover:text-primary disabled:opacity-30">→</button>
+                      <button type="button" onClick={() => moveImage(i, -1)} disabled={i === 0} className="p-1 text-white text-xs hover:text-primary disabled:opacity-30">{t('admin.moveLeft')}</button>
+                      <button type="button" onClick={() => moveImage(i, 1)} disabled={i === form.images.length - 1} className="p-1 text-white text-xs hover:text-primary disabled:opacity-30">{t('admin.moveRight')}</button>
                       <button type="button" onClick={() => removeImage(i)} className="p-1 text-white text-xs hover:text-error"><FiX size={14} /></button>
                     </div>
                   </div>

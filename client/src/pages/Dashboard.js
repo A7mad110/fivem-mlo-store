@@ -119,7 +119,7 @@ export default function Dashboard() {
             <div className="flex items-center gap-3 text-sm">
               <FiMail size={16} className="text-text-muted" />
               <span className="text-text-muted">{t('dashboard.email')}:</span>
-              <span className="text-on-surface">{user.email || '—'}</span>
+              <span className="text-on-surface">{user.email || t('dashboard.emailMissing')}</span>
             </div>
             <div className="flex items-center gap-3 text-sm">
               <FiCalendar size={16} className="text-text-muted" />
