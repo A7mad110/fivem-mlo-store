@@ -661,8 +661,8 @@ function CouponModal({ coupon, onClose, onSave, api, t }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
-      <div className="w-full max-w-lg bg-surface-container rounded-3xl p-6 md:p-8 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="w-full max-w-lg bg-surface-container rounded-3xl p-6 md:p-8 max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
           <h2 className="font-headline-sm text-headline-sm text-on-surface">{coupon ? t('admin.coupon.edit') : t('admin.coupon.add')}</h2>
           <button onClick={onClose} className="p-2 text-text-muted hover:text-on-surface"><FiX size={20} /></button>
@@ -773,8 +773,8 @@ function ProductModal({ product, onClose, onSave, api, t, uploadImage }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
-      <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-surface-container rounded-3xl p-6 md:p-8" onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-surface-container rounded-3xl p-6 md:p-8">
         <div className="flex justify-between items-center mb-6">
           <h2 className="font-headline-sm text-headline-sm text-on-surface">{product ? t('admin.product.edit') : t('admin.product.add')}</h2>
           <button onClick={onClose} className="p-2 text-text-muted hover:text-on-surface"><FiX size={20} /></button>
