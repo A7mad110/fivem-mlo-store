@@ -4,12 +4,11 @@ import { FiCreditCard, FiUser, FiCheckCircle, FiShoppingCart, FiArrowLeft } from
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import axios from 'axios';
 
 export default function Checkout() {
   const { t } = useLanguage();
   const { items: cart, totalPrice, clearCart } = useCart();
-  const { user } = useAuth();
+  const { user, api } = useAuth();
   const navigate = useNavigate();
   const [coupon, setCoupon] = useState('');
   const [couponDiscount, setCouponDiscount] = useState(0);
@@ -20,7 +19,7 @@ export default function Checkout() {
   const handleApplyCoupon = async () => {
     if (!coupon) return;
     try {
-      const res = await axios.post('/api/coupons/validate', { code: coupon, totalAmount: totalPrice });
+      const res = await api.post('/coupons/validate', { code: coupon, totalAmount: totalPrice });
       setCouponDiscount(res.data.discount || 0);
       setCouponMsg(t('checkout.couponSuccess'));
     } catch {
@@ -34,7 +33,7 @@ export default function Checkout() {
   const handleCheckout = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.post('/api/orders/create', {
+      const { data } = await api.post('/orders/create', {
         items: cart.map(i => ({ product: i.productId, quantity: i.quantity })),
         coupon: coupon || undefined,
       });
