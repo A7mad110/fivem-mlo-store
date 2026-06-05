@@ -18,8 +18,8 @@ export default function Home() {
           axios.get('/api/products?featured=true&limit=3'),
           axios.get('/api/categories'),
         ]);
-        setFeatured(featRes.data?.products || featRes.data || []);
-        setCategories(catRes.data?.categories || catRes.data || []);
+        setFeatured(featRes.data?.products || []);
+        setCategories(catRes.data?.categories || []);
       } catch (err) {
         console.error('Home fetch error:', err);
       } finally {
