@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FiCheckCircle, FiXCircle } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function DiscordSuccess() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { fetchUser } = useAuth();
+  const { t } = useLanguage();
   const [status, setStatus] = useState('loading');
 
   useEffect(() => {
@@ -40,17 +42,17 @@ export default function DiscordSuccess() {
             <div className="w-16 h-16 rounded-full bg-accent-electric/20 flex items-center justify-center mx-auto mb-4">
               <FiCheckCircle size={32} className="text-accent-electric" />
             </div>
-            <h2 className="font-headline-sm text-headline-sm text-on-surface">Login Successful</h2>
-            <p className="text-text-muted mt-2">Redirecting...</p>
+            <h2 className="font-headline-sm text-headline-sm text-on-surface">{t('discordSuccess.loginSuccess')}</h2>
+            <p className="text-text-muted mt-2">{t('discordSuccess.redirecting')}</p>
           </>
         ) : (
           <>
             <div className="w-16 h-16 rounded-full bg-error/20 flex items-center justify-center mx-auto mb-4">
               <FiXCircle size={32} className="text-error" />
             </div>
-            <h2 className="font-headline-sm text-headline-sm text-on-surface">Login Failed</h2>
-            <p className="text-text-muted mt-2">Could not authenticate with Discord.</p>
-            <button onClick={() => navigate('/login')} className="btn-primary-custom mt-6">Try Again</button>
+            <h2 className="font-headline-sm text-headline-sm text-on-surface">{t('discordSuccess.loginFailed')}</h2>
+            <p className="text-text-muted mt-2">{t('discordSuccess.errorDesc')}</p>
+            <button onClick={() => navigate('/login')} className="btn-primary-custom mt-6">{t('discordSuccess.tryAgain')}</button>
           </>
         )}
       </div>

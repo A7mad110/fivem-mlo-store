@@ -803,12 +803,12 @@ function ProductModal({ product, onClose, onSave, api, t, uploadImage }) {
             <div>
               <label className="font-label-caps text-label-caps text-text-muted text-xs mb-1.5 block">{t('admin.product.category')}</label>
               <select className="form-input" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}>
-                <option value="maps">Maps</option>
-                <option value="mlo">MLO</option>
-                <option value="interior">Interior</option>
-                <option value="exterior">Exterior</option>
-                <option value="build">Build</option>
-                <option value="other">Other</option>
+                <option value="maps">{t('admin.product.catMaps')}</option>
+                <option value="mlo">{t('admin.product.catMlo')}</option>
+                <option value="interior">{t('admin.product.catInterior')}</option>
+                <option value="exterior">{t('admin.product.catExterior')}</option>
+                <option value="build">{t('admin.product.catBuild')}</option>
+                <option value="other">{t('admin.product.catOther')}</option>
               </select>
             </div>
           </div>
