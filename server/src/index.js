@@ -221,19 +221,17 @@ if (buildPath) {
   });
 }
 
+const server = app.listen(config.port, () => {
+  console.log(`Server running on port ${config.port}`);
+});
+
 mongoose.connect(config.mongoUri)
   .then(async () => {
     console.log('MongoDB connected');
     await loadWebhooks();
-    app.listen(config.port, () => {
-      console.log(`Server running on port ${config.port}`);
-    });
   })
   .catch((err) => {
     console.error('MongoDB connection error:', err.message);
-    app.listen(config.port, () => {
-      console.log(`Server running on port ${config.port} (no database)`);
-    });
   });
 
 module.exports = app;
