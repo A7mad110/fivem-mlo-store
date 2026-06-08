@@ -49,7 +49,7 @@ export default function ProductDetail() {
     );
   }
 
-  const isOnSale = product.oldPrice && product.oldPrice > product.price;
+  const isOnSale = product.salePrice && product.salePrice < product.price;
 
   return (
     <div className="main-content">
@@ -94,9 +94,9 @@ export default function ProductDetail() {
             </div>
 
             <div className="flex items-center gap-3 mb-6">
-              <span className="font-price-tag text-price-tag text-primary">${product.price.toFixed(2)}</span>
+              <span className="font-price-tag text-price-tag text-primary">${isOnSale ? product.salePrice.toFixed(2) : product.price.toFixed(2)}</span>
               {isOnSale && (
-                <span className="text-text-muted text-lg line-through">${product.oldPrice.toFixed(2)}</span>
+                <span className="text-text-muted text-lg line-through">${product.price.toFixed(2)}</span>
               )}
             </div>
 

@@ -18,6 +18,7 @@ const adminRoutes = require('./routes/admin');
 const { auth, adminOnly } = require('./middleware/auth');
 const User = require('./models/User');
 const Product = require('./models/Product');
+const Coupon = require('./models/Coupon');
 const seedProducts = require('./data/products');
 const { configureEmail } = require('./utils/email');
 const { loadWebhooks } = require('./utils/discord');
@@ -64,9 +65,11 @@ const apiLimiter = rateLimit({
 });
 app.use('/api/', apiLimiter);
 
+app.set('trust proxy', 1);
+
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 20,
+  max: 50,
   message: { message: 'Too many login attempts, please try again later' },
 });
 app.use('/api/auth/login', authLimiter);
@@ -74,7 +77,7 @@ app.use('/api/auth/register', authLimiter);
 
 const resetLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5,
+  max: 10,
   message: { message: 'Too many attempts, please try again later' },
 });
 app.use('/api/auth/forgot-password', resetLimiter);
@@ -229,6 +232,29 @@ mongoose.connect(config.mongoUri)
   .then(async () => {
     console.log('MongoDB connected');
     await loadWebhooks();
+
+    // Auto-seed products if DB is empty
+    const productCount = await Product.countDocuments();
+    if (productCount === 0) {
+      console.log('Seeding products...');
+      await Product.insertMany(seedProducts);
+      console.log(`Seeded ${seedProducts.length} products`);
+    }
+
+    // Auto-seed a test coupon if none exist
+    const couponCount = await Coupon.countDocuments();
+    if (couponCount === 0) {
+      console.log('Seeding test coupon...');
+      await new Coupon({
+        code: 'SAVE20',
+        type: 'percentage',
+        value: 20,
+        minAmount: 10,
+        maxUses: 100,
+        active: true,
+      }).save();
+      console.log('Seeded coupon SAVE20 (20% off)');
+    }
   })
   .catch((err) => {
     console.error('MongoDB connection error:', err.message);

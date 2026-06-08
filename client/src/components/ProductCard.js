@@ -30,7 +30,7 @@ export default function ProductCard({ product }) {
     toast.success(t('shop.addedToCart'));
   };
 
-  const isOnSale = product.oldPrice && product.oldPrice > product.price;
+  const isOnSale = product.salePrice && product.salePrice < product.price;
 
   return (
     <Link
@@ -78,11 +78,11 @@ export default function ProductCard({ product }) {
         </div>
         <div className="flex items-center gap-2 mt-2">
           <span className="font-price-tag text-price-tag text-primary">
-            ${product.price.toFixed(2)}
+            ${isOnSale ? product.salePrice.toFixed(2) : product.price.toFixed(2)}
           </span>
           {isOnSale && (
             <span className="text-text-muted text-sm line-through">
-              ${product.oldPrice.toFixed(2)}
+              ${product.price.toFixed(2)}
             </span>
           )}
         </div>
