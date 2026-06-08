@@ -286,7 +286,7 @@ export default function Admin() {
               ) : products.map(p => (
                 <div key={p._id} className="glass-card rounded-2xl p-4 flex flex-col md:flex-row gap-3 items-start md:items-center justify-between">
                   <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <img src={p.thumbnail || 'https://via.placeholder.com/40'} alt="" className="w-11 h-11 rounded-xl object-cover bg-surface-container-high shrink-0" />
+                    <img src={p.thumbnail || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22%3E%3Crect width=%2240%22 height=%2240%22 fill=%22%232a2a4a%22/%3E%3C/svg%3E'} alt="" className="w-11 h-11 rounded-xl object-cover bg-surface-container-high shrink-0" />
                     <div className="min-w-0">
                       <div className="font-semibold text-sm text-on-surface truncate">{p.name}</div>
                       <div className="text-text-muted text-xs">${p.price?.toFixed(2)} | {p.category}</div>

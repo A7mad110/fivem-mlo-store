@@ -33,7 +33,7 @@ app.use(helmet({
       scriptSrc: ["'self'", "https://js.stripe.com"],
       styleSrc: ["'self'", "https://fonts.googleapis.com", "'unsafe-inline'"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "https://images.unsplash.com", "https://ui-avatars.com", "https://via.placeholder.com", "https://cdn.discordapp.com"],
+      imgSrc: ["'self'", "data:", "https://images.unsplash.com", "https://ui-avatars.com", "https://cdn.discordapp.com"],
       connectSrc: ["'self'", "https://api.stripe.com"],
       frameSrc: ["'self'", "https://js.stripe.com"],
       upgradeInsecureRequests: [],
