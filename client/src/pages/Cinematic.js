@@ -56,30 +56,6 @@ export default function Cinematic() {
         <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-accent-electric/10 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '3s' }} />
         <div className="absolute top-1/3 right-1/3 w-[300px] h-[300px] bg-primary/5 rounded-full blur-[80px]" />
 
-        {/* Floating geometry */}
-        {[...Array(6)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute hidden lg:block border border-primary/10 rounded-lg"
-            style={{
-              width: `${30 + i * 20}px`,
-              height: `${30 + i * 20}px`,
-              top: `${15 + i * 12}%`,
-              left: `${5 + i * 8}%`,
-              transform: `rotate(${i * 15}deg)`,
-              animation: `float ${4 + i * 0.5}s ease-in-out infinite`,
-              animationDelay: `${i * 0.4}s`,
-            }}
-          />
-        ))}
-
-        <style>{`
-          @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(${0}deg); }
-            50% { transform: translateY(-20px) rotate(${5}deg); }
-          }
-        `}</style>
-
         <div className="max-w-container-max mx-auto relative z-10 w-full">
           <div className="text-center lg:text-left lg:max-w-4xl">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-container/20 border border-primary-container/30 rounded-full mb-6 reveal-card">
@@ -88,7 +64,7 @@ export default function Cinematic() {
             </div>
             <h1 className="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-6 leading-tight">
               {t('cinematic.title1')}{' '}
-              <span className="text-primary glow-text">{t('cinematic.titleHighlight')}</span>
+              <span className="text-primary">{t('cinematic.titleHighlight')}</span>
               <br />
               {t('cinematic.title2')}
             </h1>
