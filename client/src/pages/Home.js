@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import ProductCard from '../components/ProductCard';
 import { useLanguage } from '../context/LanguageContext';
-import { FiArrowRight, FiStar, FiShield, FiZap, FiGlobe, FiCpu, FiShoppingCart } from 'react-icons/fi';
+import { FiArrowRight, FiStar, FiShield, FiZap, FiGlobe, FiCpu, FiShoppingCart, FiLayers, FiEye, FiClock, FiHeart } from 'react-icons/fi';
 
 export default function Home() {
   const { t } = useLanguage();
@@ -94,6 +94,85 @@ export default function Home() {
                 <div className="text-text-muted text-sm mt-1">{stat.label}</div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Cinematic Design Showcase */}
+      <section className="relative px-margin-edge py-section-gap overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary-container/10 via-transparent to-accent-electric/5" />
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent-electric/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="max-w-container-max mx-auto relative z-10">
+          <div className="text-center mb-16 reveal-card">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-container/20 border border-primary-container/30 rounded-full mb-6">
+              <FiLayers size={14} className="text-primary" />
+              <span className="font-label-caps text-label-caps text-primary text-sm">{t('cinematic.badge')}</span>
+            </div>
+            <h2 className="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-4">
+              {t('cinematic.title1')}{' '}
+              <span className="text-primary">{t('cinematic.titleHighlight')}</span>
+              <br />
+              {t('cinematic.title2')}
+            </h2>
+            <p className="text-body-lg text-text-muted max-w-3xl mx-auto">
+              {t('cinematic.subtitle')}
+            </p>
+          </div>
+
+          {/* Cinematic stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-gutter mb-16">
+            {[
+              { value: t('cinematic.stat1Value'), label: t('cinematic.stat1'), desc: t('cinematic.statDesc'), icon: FiEye },
+              { value: t('cinematic.stat2Value'), label: t('cinematic.stat2'), desc: t('cinematic.statDesc2'), icon: FiClock },
+              { value: t('cinematic.stat3Value'), label: t('cinematic.stat3'), desc: t('cinematic.statDesc3'), icon: FiHeart },
+              { value: t('cinematic.stat4Value'), label: t('cinematic.stat4'), desc: t('cinematic.statDesc4'), icon: FiLayers },
+            ].map((s, i) => (
+              <div key={i} className="glass-card rounded-2xl p-6 text-center reveal-card group hover:border-primary/30 transition-all duration-500">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-container/30 to-accent-electric/10 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-500">
+                  <s.icon size={22} className="text-primary" />
+                </div>
+                <div className="font-price-tag text-price-tag text-primary font-bold">{s.value}</div>
+                <div className="font-headline-sm text-headline-sm text-on-surface mt-1">{s.label}</div>
+                <div className="text-text-muted text-xs mt-1">{s.desc}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Design showcase cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter reveal-card">
+            {[
+              {
+                title: 'Cyber-Nexus',
+                desc: 'Material 3 inspired glass morphism with neon accents and deep space gradients.',
+                color: 'from-primary/20 to-accent-electric/10',
+                border: 'border-primary/20',
+              },
+              {
+                title: 'RTL-First',
+                desc: 'Full Arabic support with seamless RTL layout, IBM Plex Sans Arabic typography, and bidirectional design system.',
+                color: 'from-accent-electric/20 to-primary/10',
+                border: 'border-accent-electric/20',
+              },
+              {
+                title: 'Immersive UX',
+                desc: 'Cinematic transitions, parallax effects, mouse-reactive glows, and smooth micro-animations throughout.',
+                color: 'from-primary/10 to-accent-electric/20',
+                border: 'border-primary/20',
+              },
+            ].map((card, i) => (
+              <div key={i} className={`glass-card rounded-2xl p-8 text-center bg-gradient-to-br ${card.color} border ${card.border} group hover:scale-[1.02] transition-all duration-500`}>
+                <div className="w-16 h-1 rounded-full bg-primary mx-auto mb-6 group-hover:w-24 transition-all duration-500" />
+                <h3 className="font-headline-sm text-headline-sm text-on-surface mb-3">{card.title}</h3>
+                <p className="text-text-muted text-sm leading-relaxed">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center mt-12 reveal-card">
+            <Link to="/shop" className="btn-primary-custom inline-flex items-center gap-2 text-base group">
+              {t('cinematic.cta')} <FiArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
           </div>
         </div>
       </section>
