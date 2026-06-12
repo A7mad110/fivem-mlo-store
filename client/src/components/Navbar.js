@@ -49,6 +49,9 @@ export default function Navbar() {
             <Link to="/shop" className="font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface transition-colors duration-200">
               {t('nav.shop')}
             </Link>
+            <Link to="/cinematic" className="font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface transition-colors duration-200">
+              {t('nav.cinematic')}
+            </Link>
             {user && (
               <Link to="/dashboard/orders" className="font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface transition-colors duration-200">
                 {t('nav.myOrders')}
@@ -154,6 +157,9 @@ export default function Navbar() {
           </Link>
           <Link to="/shop" className="block font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface py-3" onClick={() => setMenuOpen(false)}>
             {t('nav.shop')}
+          </Link>
+          <Link to="/cinematic" className="block font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface py-3" onClick={() => setMenuOpen(false)}>
+            {t('nav.cinematic')}
           </Link>
           {user && (
             <Link to="/dashboard/orders" className="block font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface py-3" onClick={() => setMenuOpen(false)}>

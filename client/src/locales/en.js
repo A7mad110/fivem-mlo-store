@@ -13,6 +13,7 @@ const en = {
     english: 'English',
     arabic: 'Arabic',
     logoFallback: '🏙️',
+    cinematic: 'Design',
   },
   home: {
     heroBadge: 'Premium FiveM Assets',

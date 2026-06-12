@@ -13,6 +13,7 @@ const ar = {
     english: 'الإنجليزية',
     arabic: 'العربية',
     logoFallback: '🏙️',
+    cinematic: 'التصميم',
   },
   home: {
     heroBadge: 'محتوى FiveM ممتاز',

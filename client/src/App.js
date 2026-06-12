@@ -16,6 +16,7 @@ import Dashboard from './pages/Dashboard';
 import Orders from './pages/Orders';
 import Admin from './pages/Admin';
 import DiscordSuccess from './pages/DiscordSuccess';
+import Cinematic from './pages/Cinematic';
 import NotFound from './pages/NotFound';
 import Setup from './pages/Setup';
 
@@ -69,6 +70,7 @@ export default function App() {
           <Route path="/faq" element={<SimplePage titleKey="faq" />} />
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/refund" element={<SimplePage titleKey="refund" />} />
+          <Route path="/cinematic" element={<Cinematic />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
